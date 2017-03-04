@@ -27,6 +27,12 @@
 #define LED3	0 //PC0
 #define LED4	10 //PA10
 
-#define MIDI_RX_PIN	3
+#define MIDI_RX_PIN	3 //PA3
+
+//DAC control bit defines. Currently using Write-Through (0b0011XXXX). Should preclude need to manipulate LDAC
+#define DAC_CHAN_0 0b00110001
+#define DAC_CHAN_1 0b00110010
+#define DAC_CHAN_2 0b00110100
+#define DAC_CHAN_3 0b00111000
 
 #endif /* INCLUDE_HARDWARE_H_ */

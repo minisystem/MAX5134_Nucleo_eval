@@ -16,6 +16,7 @@
 #include "hardware.h"
 #include "switches.h"
 #include "midi.h"
+
 //#include "midi.h"
 //#include "midi_device.h"
 
@@ -67,6 +68,14 @@ main(int argc, char* argv[])
   
   initialize_switches(SWITCH_PORT, SWITCH_PIN);
   init_midi_usart();
+  init_spi();
+  //clear all DAC channels
+  spi_write_dac(0, DAC_CHAN_0);
+  spi_write_dac(0, DAC_CHAN_1);
+  spi_write_dac(0, DAC_CHAN_2);
+  spi_write_dac(0, DAC_CHAN_3);
+
+
   uint32_t current_switch_state = 0;
   uint32_t previous_switch_state = 0;
   uint8_t led_index = 0;
@@ -79,6 +88,8 @@ main(int argc, char* argv[])
   	{GPIOA, LED4}
 
   };
+
+  spi_write_dac(0xFFF0, DAC_CHAN_0);
   // Infinite loop
   while (1)
     {
