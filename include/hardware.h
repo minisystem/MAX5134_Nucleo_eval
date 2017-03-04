@@ -18,6 +18,9 @@
 #define LED3_PORT	RCC_AHB1Periph_GPIOC //PORTC
 #define LED4_PORT	RCC_AHB1Periph_GPIOA //PORTA
 
+#define LDAC_PIN GPIO_Pin_9
+#define DAC_CS_PIN GPIO_Pin_8
+
 #define SWITCH_PORT 2
 #define SWITCH_PIN	7
 
@@ -29,10 +32,10 @@
 
 #define MIDI_RX_PIN	3 //PA3
 
-//DAC control bit defines. Currently using Write-Through (0b0011XXXX). Should preclude need to manipulate LDAC
-#define DAC_CHAN_0 0b00110001
-#define DAC_CHAN_1 0b00110010
-#define DAC_CHAN_2 0b00110100
-#define DAC_CHAN_3 0b00111000
+//DAC control bit defines for Write. Requires min 33ns HIGH to LOW LDAC pulse to latch all 4 DACs simultaneously. Can also configure for Write-through which doesn't require LDAC pulsing
+#define DAC_CHAN_0 0b00010001
+#define DAC_CHAN_1 0b00010010
+#define DAC_CHAN_2 0b00010100
+#define DAC_CHAN_3 0b00011000
 
 #endif /* INCLUDE_HARDWARE_H_ */

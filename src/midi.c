@@ -16,7 +16,7 @@ void init_midi_usart(void) {
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART2, ENABLE); //enable peripheral clock
 
 
-	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2); //is this necessary? Alternative function for this pin is set below.
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource3, GPIO_AF_USART2); //is this necessary? Alternative function for this pin is set below. YES IT IS.
 	//initi USART RX PIN
 	GPIO_InitTypeDef gpio_init;
 	gpio_init.GPIO_Pin = GPIO_Pin_3;// MIDI_RX_PIN;//(1 << MIDI_RX_PIN);

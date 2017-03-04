@@ -75,7 +75,7 @@ main(int argc, char* argv[])
   spi_write_dac(0, DAC_CHAN_2);
   spi_write_dac(0, DAC_CHAN_3);
 
-
+  uint8_t counter = 0;
   uint32_t current_switch_state = 0;
   uint32_t previous_switch_state = 0;
   uint8_t led_index = 0;
@@ -90,6 +90,7 @@ main(int argc, char* argv[])
   };
 
   spi_write_dac(0xFFF0, DAC_CHAN_0);
+
   // Infinite loop
   while (1)
     {
@@ -138,6 +139,14 @@ main(int argc, char* argv[])
 //
 //
 //      }
+	  GPIO_SetBits(GPIOA, LDAC_PIN);
+
+	  spi_write_dac((counter << 8), DAC_CHAN_0);
+	  spi_write_dac((counter << 8), DAC_CHAN_1);
+	  spi_write_dac((counter << 8), DAC_CHAN_2);
+	  spi_write_dac((counter << 8), DAC_CHAN_3);
+	  GPIO_ResetBits(GPIOA, LDAC_PIN);
+	  ++counter;
       ++seconds;
       // Count seconds on the trace device.
       //trace_printf("Second %u\n", seconds);

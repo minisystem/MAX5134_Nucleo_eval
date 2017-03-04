@@ -15,8 +15,8 @@ void spi_write_dac(uint16_t value, uint8_t channel);
 void init_spi(void) {
 
 	//initialize MOSI and SCK pins
-	//GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1);
-	//GPIO_PinAConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_SPI1);
+	GPIO_PinAFConfig(GPIOA, GPIO_PinSource5, GPIO_AF_SPI1);
 
 	GPIO_InitTypeDef gpio_init; //GPIOA clock set in leds.c
 	gpio_init.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_5; //PA7 = MOSI, PA5 = SCK
