@@ -1,0 +1,16 @@
+14:50:27 **** Incremental Build of configuration Release for project Template ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "Template.elf"
+   text	   data	    bss	    dec	    hex	filename
+   8390	    168	    408	   8966	   2306	Template.elf
+Finished building: Template.siz
+ 
+14:52:27 **** Incremental Build of configuration Release for project Template ****
+make all 
+Invoking: Cross ARM GNU Print Size
+arm-none-eabi-size --format=berkeley "Template.elf"
+   text	   data	    bss	    dec	    hex	filename
+   8390	    168	    408	   8966	   2306	Template.elf
+Finished building: Template.siz
+ 
