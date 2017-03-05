@@ -34,8 +34,10 @@
 
 //DAC control bit defines for Write. Requires min 33ns HIGH to LOW LDAC pulse to latch all 4 DACs simultaneously. Can also configure for Write-through which doesn't require LDAC pulsing
 #define DAC_CHAN_0 0b00010001
-#define DAC_CHAN_1 0b00010010
+#define DAC_CHAN_1 0b00110010 //temporarily set to write through
 #define DAC_CHAN_2 0b00010100
 #define DAC_CHAN_3 0b00011000
+
+#define DAC_CHAN_NUM 4 //there are 4 DAC channels on MAX5134
 
 #endif /* INCLUDE_HARDWARE_H_ */

@@ -6,7 +6,13 @@
  */
 
 #include "stm32f4xx_it.h"
+#include "hardware.h"
 #include <stdlib.h>
+
+__IO uint8_t TX_buffer[TX_BUFFER_SIZE];
+__IO uint8_t TX_buffer_index = 0;
+__IO uint8_t DAC_index = 0;
+__IO uint8_t DAC_counter = 0;
 
 //forward declarations
 void init_spi(void);
@@ -22,6 +28,7 @@ void init_spi(void) {
 	gpio_init.GPIO_Pin = GPIO_Pin_7 | GPIO_Pin_5; //PA7 = MOSI, PA5 = SCK
 	gpio_init.GPIO_Speed = GPIO_Fast_Speed;
 	gpio_init.GPIO_Mode = GPIO_Mode_AF;
+	gpio_init.GPIO_OType = GPIO_OType_PP;
 	gpio_init.GPIO_PuPd = GPIO_PuPd_UP; //enable pull up?
 	GPIO_Init(GPIOA, &gpio_init);
 
@@ -29,6 +36,7 @@ void init_spi(void) {
 	gpio_init.GPIO_Pin = GPIO_Pin_8 | GPIO_Pin_9; //PA8 = CS/SS, PA9 = LDAC
 	gpio_init.GPIO_Speed = GPIO_Fast_Speed;
 	gpio_init.GPIO_Mode = GPIO_Mode_OUT;
+	gpio_init.GPIO_OType = GPIO_OType_PP;
 	gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
 	GPIO_Init(GPIOA, &gpio_init);
 
@@ -56,21 +64,40 @@ void init_spi(void) {
 	DMA_DeInit(DMA2_Stream3); //SPI1 TX is DMA2 Stream 3
 	DMA_InitTypeDef dma_init;
 	DMA_StructInit(&dma_init); //set all values to default
+	dma_init.DMA_BufferSize = TX_BUFFER_SIZE;
 	dma_init.DMA_PeripheralBaseAddr = (uint32_t) (&(SPI1->DR));
 	dma_init.DMA_Channel = DMA_Channel_3; //SPI1 TX is on DMA Channel 3
 	dma_init.DMA_DIR = DMA_DIR_MemoryToPeripheral;
 	dma_init.DMA_MemoryInc = DMA_MemoryInc_Enable;
-	//dma_init.DMA_Memory0BaseAddr = (uint32_t)TX_buffer; //need to declare TX_buffer in main. It should be array of 3 uint8_t (24 bits)
+	dma_init.DMA_Memory0BaseAddr = (uint32_t)TX_buffer; //TX_buffer is array of 3 uint8_t (24 bits)
+	dma_init.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+	dma_init.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+	dma_init.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+	dma_init.DMA_Priority = DMA_Priority_High;
+	dma_init.DMA_FIFOMode = DMA_FIFOMode_Disable ;
+	dma_init.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull ;
+	dma_init.DMA_MemoryBurst = DMA_MemoryBurst_Single ;
+	dma_init.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+	dma_init.DMA_Mode = DMA_Mode_Normal;
 	DMA_Init(DMA2_Stream3, &dma_init);
+	//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
 
 	//initialize DMA interrupt controller
-	NVIC_InitTypeDef nvic_init;
-	nvic_init.NVIC_IRQChannel = DMA2_Stream3_IRQn;
-	nvic_init.NVIC_IRQChannelPreemptionPriority = 0;
-	nvic_init.NVIC_IRQChannelSubPriority = 1;
-	nvic_init.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&nvic_init);
-	SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE);
+//	NVIC_InitTypeDef nvic_init;
+//	nvic_init.NVIC_IRQChannel = DMA2_Stream3_IRQn;
+//	nvic_init.NVIC_IRQChannelPreemptionPriority = 0;
+//	nvic_init.NVIC_IRQChannelSubPriority = 1;
+//	nvic_init.NVIC_IRQChannelCmd = ENABLE;
+//	NVIC_Init(&nvic_init);
+	//SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE);
+
+	TX_buffer[0] = DAC_CHAN_1;
+	TX_buffer[1] = 0;
+	TX_buffer[2] = 0;
+
+
+
+
 }
 
 void spi_write_dac(uint16_t value, uint8_t channel) { //currently just use busy/wait to transmit data to test DAC

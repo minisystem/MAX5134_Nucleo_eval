@@ -70,10 +70,10 @@ main(int argc, char* argv[])
   init_midi_usart();
   init_spi();
   //clear all DAC channels
-  spi_write_dac(0, DAC_CHAN_0);
-  spi_write_dac(0, DAC_CHAN_1);
-  spi_write_dac(0, DAC_CHAN_2);
-  spi_write_dac(0, DAC_CHAN_3);
+  //spi_write_dac(0, DAC_CHAN_0);
+  //spi_write_dac(0, DAC_CHAN_1);
+  //spi_write_dac(0, DAC_CHAN_2);
+  //spi_write_dac(0, DAC_CHAN_3);
 
   uint8_t counter = 0;
   uint32_t current_switch_state = 0;
@@ -89,7 +89,17 @@ main(int argc, char* argv[])
 
   };
 
-  spi_write_dac(0xFFF0, DAC_CHAN_0);
+  uint8_t tx_buffer[TX_BUFFER_SIZE] = {
+
+	DAC_CHAN_1,
+	0,
+	0
+
+
+  };
+  DMA2_Stream3->M0AR = (uint32_t)tx_buffer;
+
+  //spi_write_dac(0xFFF0, DAC_CHAN_0);
 
   // Infinite loop
   while (1)
@@ -118,6 +128,17 @@ main(int argc, char* argv[])
 
 	  //uint8_t blah;
 	  turn_led_on(GPIOA, LED1);
+
+	  GPIO_ResetBits(GPIOA, GPIO_Pin_8); //DAC CS
+	  DMA_Cmd(DMA2_Stream3, ENABLE); //enable DMA
+	  SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE); //enable SPI1 TX request
+	  while (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TCIF3) == RESET);
+	  GPIO_SetBits(GPIOA, GPIO_Pin_8);
+	  DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3);
+	  //DMA_Cmd(DMA2_Stream3, DISABLE);
+	  //SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Rx, DISABLE);
+	  tx_buffer[1] = (counter);
+	  //turn_led_off(GPIOA, LED1);
 //	  if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) {
 //		  turn_led_off(GPIOA, LED1);
 //		  blah = USART2->DR & 0xff;
@@ -127,25 +148,25 @@ main(int argc, char* argv[])
 //
 //    	  turn_led_off(led[i-1].port, led[i-1].pin);
 //    	  turn_led_on(led[i].port, led[i].pin);
-//    	  timer_sleep(BLINK_OFF_TICKS);
+//    	  //timer_sleep(BLINK_OFF_TICKS);
 //
 //      }
-//
+
 //      for (int i = 3; i > 0; i--) {
 //
 //    	  turn_led_off(led[i].port, led[i].pin);
 //    	  turn_led_on(led[i-1].port, led[i-1].pin);
-//    	  timer_sleep(BLINK_OFF_TICKS);
+//    	  //timer_sleep(BLINK_OFF_TICKS);
 //
 //
 //      }
-	  GPIO_SetBits(GPIOA, LDAC_PIN);
+	  //GPIO_SetBits(GPIOA, LDAC_PIN);
 
-	  spi_write_dac((counter << 8), DAC_CHAN_0);
-	  spi_write_dac((counter << 8), DAC_CHAN_1);
-	  spi_write_dac((counter << 8), DAC_CHAN_2);
-	  spi_write_dac((counter << 8), DAC_CHAN_3);
-	  GPIO_ResetBits(GPIOA, LDAC_PIN); //LDAC has a minimum pulse width of 33ns - once DMA SPI is working there might be a problem?
+//	  spi_write_dac((counter << 8), DAC_CHAN_0);
+//	  spi_write_dac((counter << 8), DAC_CHAN_1);
+//	  spi_write_dac((counter << 8), DAC_CHAN_2);
+//	  spi_write_dac((counter << 8), DAC_CHAN_3);
+//	  GPIO_ResetBits(GPIOA, LDAC_PIN); //LDAC has a minimum pulse width of 33ns - once DMA SPI is working there might be a problem?
 	  ++counter;
       ++seconds;
       // Count seconds on the trace device.

@@ -30,6 +30,7 @@ blink_led_init(GPIO_TypeDef * port, uint32_t port_num, uint32_t led_pin)
   GPIO_InitStructure.GPIO_Pin = (1 << led_pin);
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_Speed = GPIO_Fast_Speed;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
   //int blink_gpio = BLINK_GPIOx(BLINK_PORT_NUMBER);
   GPIO_Init(port, &GPIO_InitStructure);
