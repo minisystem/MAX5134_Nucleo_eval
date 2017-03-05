@@ -51,8 +51,26 @@ void init_spi(void) {
 	GPIO_SetBits(GPIOA, GPIO_Pin_8); //set DAC CS/SS HIGH
 	GPIO_SetBits(GPIOA, GPIO_Pin_9); //set LDAC high
 
+	//initialize DMA
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE); //SPI1 TX is Channel 3, Stream 3 of DMA2
+	DMA_DeInit(DMA2_Stream3); //SPI1 TX is DMA2 Stream 3
+	DMA_InitTypeDef dma_init;
+	DMA_StructInit(&dma_init); //set all values to default
+	dma_init.DMA_PeripheralBaseAddr = (uint32_t) (&(SPI1->DR));
+	dma_init.DMA_Channel = DMA_Channel_3; //SPI1 TX is on DMA Channel 3
+	dma_init.DMA_DIR = DMA_DIR_MemoryToPeripheral;
+	dma_init.DMA_MemoryInc = DMA_MemoryInc_Enable;
+	//dma_init.DMA_Memory0BaseAddr = (uint32_t)TX_buffer; //need to declare TX_buffer in main. It should be array of 3 uint8_t (24 bits)
+	DMA_Init(DMA2_Stream3, &dma_init);
 
-
+	//initialize DMA interrupt controller
+	NVIC_InitTypeDef nvic_init;
+	nvic_init.NVIC_IRQChannel = DMA2_Stream3_IRQn;
+	nvic_init.NVIC_IRQChannelPreemptionPriority = 0;
+	nvic_init.NVIC_IRQChannelSubPriority = 1;
+	nvic_init.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&nvic_init);
+	SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE);
 }
 
 void spi_write_dac(uint16_t value, uint8_t channel) { //currently just use busy/wait to transmit data to test DAC
@@ -61,6 +79,7 @@ void spi_write_dac(uint16_t value, uint8_t channel) { //currently just use busy/
 	uint8_t dac_high = value >> 8; //take top 8 bits
 	GPIO_ResetBits(GPIOA, GPIO_Pin_8); //CS low
 	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET);//wait for empty buffer
+	//maybe switch to 16 bit transmission here? Once DMA is implemented would it be faster?
 	SPI_I2S_SendData(SPI1, channel); //send control byte
 	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET); //wait for byte to be sent
 	SPI_I2S_SendData(SPI1, dac_high); //send first data byte

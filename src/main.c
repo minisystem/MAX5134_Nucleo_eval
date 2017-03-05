@@ -145,7 +145,7 @@ main(int argc, char* argv[])
 	  spi_write_dac((counter << 8), DAC_CHAN_1);
 	  spi_write_dac((counter << 8), DAC_CHAN_2);
 	  spi_write_dac((counter << 8), DAC_CHAN_3);
-	  GPIO_ResetBits(GPIOA, LDAC_PIN);
+	  GPIO_ResetBits(GPIOA, LDAC_PIN); //LDAC has a minimum pulse width of 33ns - once DMA SPI is working there might be a problem?
 	  ++counter;
       ++seconds;
       // Count seconds on the trace device.

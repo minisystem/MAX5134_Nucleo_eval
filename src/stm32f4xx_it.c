@@ -188,4 +188,9 @@ void USART2_IRQHandler(void) {
 	//NVIC_ClearPendingIRQ(USART2_IRQn);
 
 }
+
+void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
+
+}
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
