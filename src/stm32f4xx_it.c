@@ -186,9 +186,9 @@ void USART2_IRQHandler(void) {
 
 		data = USART_ReceiveData(USART2) & 0xFF;
 		//midi_device_input(&midi_device, 1, &data);
-		trace_printf("MIDI DATA: %u\n", data);
+		//trace_printf("MIDI DATA: %u\n", data);
 		turn_led_on(GPIOB, LED2);
-		turn_led_off(GPIOA, LED1);
+		//turn_led_off(GPIOA, LED1);
 	}
 
 	//USART_ClearITPendingBit(USART2, USART_IT_RXNE);
@@ -197,8 +197,8 @@ void USART2_IRQHandler(void) {
 }
 
 void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
-	turn_led_off(GPIOA, LED1);
-	turn_led_on(GPIOA, LED4);
+	//turn_led_off(GPIOA, LED1);
+	//turn_led_on(GPIOA, LED4);
 	//http://www.micromouseonline.com/2012/03/11/adding-dma-to-the-spi-driver-with-the-stm32f4/
 	uint8_t DAC_ctrl_byte[DAC_CHAN_NUM] = {
 
@@ -209,37 +209,34 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 
 	};
 
-	if (DMA_GetITStatus(DMA2_Stream3, DMA_FLAG_TCIF3)) { //test if DMA Stream transfer complete (why? Isn't that the point of the interrupt being called?)
+	//if (DMA_GetITStatus(DMA2_Stream3, DMA_IT_TCIF3)) { //test if DMA Stream transfer complete (why? Isn't that the point of the interrupt being called?)
 
-		DMA_ClearITPendingBit(DMA2_Stream3, DMA_FLAG_TCIF3); //clear interrupt DMA IRQ flag bit
-		while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET){}; //wait for data to be flushed from transmit buffer
-		while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET){}; //wait for data to be flushed from shift register
+		DMA_ClearITPendingBit(DMA2_Stream3, DMA_IT_TCIF3); //clear interrupt DMA IRQ flag bit
+		DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3); //isn't this the same as line above?
+		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET){}; //wait for data to be flushed from transmit buffer
+		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET){}; //wait for data to be flushed from shift register
 
-
-		//transfer is finished, now initiate next transfer
-		//if (TX_buffer_index++ > TX_BUFFER_SIZE) { //24 bit transfer to DAC is complete
-		//	TX_buffer_index = 0;
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
 			DAC_counter++; //increment dac_value
-			TX_buffer[1] = DAC_counter >> 8; //set top byte
-			TX_buffer[2] = DAC_counter & 0xFF; //set bottom byte
+			TX_buffer[1] = DAC_counter; //set top byte
+			//TX_buffer[2] = DAC_counter & 0xFF; //set bottom byte
 		}
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
 
-		//}
 
 		GPIO_SetBits(GPIOA, LDAC_PIN); //set LDAC PIN
 		GPIO_ResetBits(GPIOA, DAC_CS_PIN); //select DAC
 
 		//now initiate next DMA transfer
-		DMA2_Stream3->NDTR = (uint32_t)TX_BUFFER_SIZE; //this value is decremented - does that mean data in TX_buffer needs to be reversed?
-		DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
-		DMA_Cmd(DMA2_Stream3, ENABLE);
-		DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
-	}
+		//don't really need to reset these - these are configured in spi setup function
+		//DMA2_Stream3->NDTR = (uint32_t)TX_BUFFER_SIZE;
+		//DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
+		DMA_Cmd(DMA2_Stream3, ENABLE); //need to re-enable DMA transfer as it turns off itself once transfer is complete
+		//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
+	//}
 
 
 }

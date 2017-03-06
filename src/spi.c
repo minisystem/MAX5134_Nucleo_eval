@@ -17,6 +17,7 @@ __IO uint8_t DAC_counter = 0;
 //forward declarations
 void init_spi(void);
 void spi_write_dac(uint16_t value, uint8_t channel);
+void spi_dma_write(uint16_t value, uint8_t channel);
 
 void init_spi(void) {
 
@@ -80,23 +81,17 @@ void init_spi(void) {
 	dma_init.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
 	dma_init.DMA_Mode = DMA_Mode_Normal;
 	DMA_Init(DMA2_Stream3, &dma_init);
-	//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
+	DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE); //enable DMA transfer complete interrupt
 
 	//initialize DMA interrupt controller
-//	NVIC_InitTypeDef nvic_init;
-//	nvic_init.NVIC_IRQChannel = DMA2_Stream3_IRQn;
-//	nvic_init.NVIC_IRQChannelPreemptionPriority = 0;
-//	nvic_init.NVIC_IRQChannelSubPriority = 1;
-//	nvic_init.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_Init(&nvic_init);
-	//SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE);
-
-	TX_buffer[0] = DAC_CHAN_1;
-	TX_buffer[1] = 0;
-	TX_buffer[2] = 0;
-
-
-
+	NVIC_InitTypeDef nvic_init;
+	nvic_init.NVIC_IRQChannel = DMA2_Stream3_IRQn;
+	nvic_init.NVIC_IRQChannelPreemptionPriority = 0;
+	nvic_init.NVIC_IRQChannelSubPriority = 1;
+	nvic_init.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&nvic_init);
+	SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE);
+	DMA_Cmd(DMA2_Stream3, ENABLE); //enable DMA
 
 }
 
@@ -115,6 +110,20 @@ void spi_write_dac(uint16_t value, uint8_t channel) { //currently just use busy/
 	while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET); //wait for byte to be sent
 	GPIO_SetBits(GPIOA, GPIO_Pin_8);
 
+
+}
+
+void spi_dma_write(uint16_t value, uint8_t channel) {
+
+	TX_buffer[0] = channel;
+	TX_buffer[1] = value >> 8; //top high byte
+	TX_buffer[2] = value & 0xFF; //low byte
+	GPIO_ResetBits(GPIOA, DAC_CS_PIN); //select DAC
+	DMA_Cmd(DMA2_Stream3, ENABLE); //enable DMA
+	SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE); //enable SPI1 TX request
+	while (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TCIF3) == RESET); //wait for transfer to complete
+	GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
+	DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3);
 
 }
 

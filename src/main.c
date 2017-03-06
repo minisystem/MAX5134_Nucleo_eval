@@ -97,7 +97,7 @@ main(int argc, char* argv[])
 
 
   };
-  DMA2_Stream3->M0AR = (uint32_t)tx_buffer;
+  //DMA2_Stream3->M0AR = (uint32_t)tx_buffer;
 
   //spi_write_dac(0xFFF0, DAC_CHAN_0);
 
@@ -128,16 +128,22 @@ main(int argc, char* argv[])
 
 	  //uint8_t blah;
 	  turn_led_on(GPIOA, LED1);
-
-	  GPIO_ResetBits(GPIOA, GPIO_Pin_8); //DAC CS
-	  DMA_Cmd(DMA2_Stream3, ENABLE); //enable DMA
-	  SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE); //enable SPI1 TX request
-	  while (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TCIF3) == RESET);
-	  GPIO_SetBits(GPIOA, GPIO_Pin_8);
-	  DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3);
+	  turn_led_off(GPIOB, LED2);
+//	  GPIO_SetBits(GPIOA, LDAC_PIN);
+//	  GPIO_ResetBits(GPIOA, DAC_CS_PIN); //DAC CS
+//	  DMA_Cmd(DMA2_Stream3, ENABLE); //enable DMA
+//	  SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE); //enable SPI1 TX request
+//	  while (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TCIF3) == RESET);
+//	  GPIO_SetBits(GPIOA, DAC_CS_PIN);
+//	  DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3);
+//	  spi_dma_write((counter << 8), DAC_CHAN_0);
+//	  spi_dma_write((counter << 8), DAC_CHAN_1);
+//	  spi_dma_write((counter << 8), DAC_CHAN_2);
+//	  spi_dma_write((counter << 8), DAC_CHAN_3);
+//	  GPIO_ResetBits(GPIOA, LDAC_PIN);
 	  //DMA_Cmd(DMA2_Stream3, DISABLE);
 	  //SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Rx, DISABLE);
-	  tx_buffer[1] = (counter);
+	  //tx_buffer[1] = (counter);
 	  //turn_led_off(GPIOA, LED1);
 //	  if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) {
 //		  turn_led_off(GPIOA, LED1);
