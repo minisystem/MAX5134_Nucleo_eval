@@ -158,6 +158,7 @@ void SysTick_Handler(void) //currently executes every 1ms
 	timer_tick ();
 	turn_led_off(GPIOA, LED1);
 	turn_led_off(GPIOB, LED2);
+	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
 }
 
 /******************************************************************************/
@@ -186,10 +187,12 @@ void USART2_IRQHandler(void) {
 	if (USART_GetITStatus(USART2,USART_IT_RXNE)){
 
 		data = USART_ReceiveData(USART2) & 0xFF;
+		//turn_led_on(GPIOC, LED3);
 		midi_device_input(&midi_device, 1, &data);
+		//turn_led_off(GPIOC, LED3);
 		//trace_printf("MIDI DATA: %u\n", data);
 		turn_led_on(GPIOB, LED2);
-		//turn_led_off(GPIOA, LED1);
+		turn_led_off(GPIOA, LED1);
 	}
 
 	//USART_ClearITPendingBit(USART2, USART_IT_RXNE);

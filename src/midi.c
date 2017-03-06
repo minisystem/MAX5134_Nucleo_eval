@@ -44,18 +44,21 @@ void init_midi_usart(void) {
 	NVIC_InitTypeDef NVIC_InitStruct;
 	NVIC_InitStruct.NVIC_IRQChannel = USART2_IRQn;
 	NVIC_InitStruct.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStruct.NVIC_IRQChannelPreemptionPriority = 1;
 	NVIC_InitStruct.NVIC_IRQChannelSubPriority = 0;
 	NVIC_Init(&NVIC_InitStruct);
 
 }
 
-//void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t velocity) {
-//
-//}
-//void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
-//
-//}
-//void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
-//
-//}
+void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t velocity) {
+
+	//turn_led_on(GPIOC, LED3);
+
+}
+void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
+
+	//turn_led_off(GPIOC, LED3);
+}
+void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
+
+}

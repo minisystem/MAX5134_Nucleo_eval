@@ -70,11 +70,12 @@ main(int argc, char* argv[])
   initialize_switches(SWITCH_PORT, SWITCH_PIN);
   init_midi_usart();
   init_spi();
-  //clear all DAC channels
-  //spi_write_dac(0, DAC_CHAN_0);
-  //spi_write_dac(0, DAC_CHAN_1);
-  //spi_write_dac(0, DAC_CHAN_2);
-  //spi_write_dac(0, DAC_CHAN_3);
+
+  midi_device_init(&midi_device);
+  //register callbacks
+  midi_register_noteon_callback(&midi_device, note_on_event);
+  midi_register_noteoff_callback(&midi_device, note_off_event);
+  midi_register_realtime_callback(&midi_device, real_time_event);
 
   uint8_t counter = 0;
   uint32_t current_switch_state = 0;
@@ -126,7 +127,7 @@ main(int argc, char* argv[])
 //
 //		  turn_led_off(GPIOA, LED1);
 //	  }
-	  midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
+	  //midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
 
 
 	  turn_led_on(GPIOA, LED1);
