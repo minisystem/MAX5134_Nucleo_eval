@@ -152,11 +152,12 @@ void PendSV_Handler(void)
   * @param  None
   * @retval None
   */
-void SysTick_Handler(void)
+void SysTick_Handler(void) //currently executes every 1ms
 {
   //TimingDelay_Decrement();
 	timer_tick ();
 	turn_led_off(GPIOA, LED1);
+	turn_led_off(GPIOB, LED2);
 }
 
 /******************************************************************************/
@@ -185,7 +186,7 @@ void USART2_IRQHandler(void) {
 	if (USART_GetITStatus(USART2,USART_IT_RXNE)){
 
 		data = USART_ReceiveData(USART2) & 0xFF;
-		//midi_device_input(&midi_device, 1, &data);
+		midi_device_input(&midi_device, 1, &data);
 		//trace_printf("MIDI DATA: %u\n", data);
 		turn_led_on(GPIOB, LED2);
 		//turn_led_off(GPIOA, LED1);
@@ -198,7 +199,7 @@ void USART2_IRQHandler(void) {
 
 void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 	//turn_led_off(GPIOA, LED1);
-	//turn_led_on(GPIOA, LED4);
+	turn_led_on(GPIOA, LED4);
 	//http://www.micromouseonline.com/2012/03/11/adding-dma-to-the-spi-driver-with-the-stm32f4/
 	uint8_t DAC_ctrl_byte[DAC_CHAN_NUM] = {
 
@@ -238,6 +239,7 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
 	//}
 
+		turn_led_off(GPIOA, LED4);
 
 }
 

@@ -4,6 +4,7 @@
 //
 
 // -------------------
+//#define NDEBUG
 #include "main.h"
 #include "stm32f4xx_it.h"
 #include <stdlib.h>
@@ -17,8 +18,8 @@
 #include "switches.h"
 #include "midi.h"
 
-//#include "midi.h"
-//#include "midi_device.h"
+#include "xnormidi-develop/midi.h"
+#include "xnormidi-develop/midi_device.h"
 
 //
 // Trace support is enabled by adding the TRACE macro definition.
@@ -43,7 +44,7 @@
 #pragma GCC diagnostic ignored "-Wmissing-declarations"
 #pragma GCC diagnostic ignored "-Wreturn-type"
 
-//MidiDevice midi_device;
+MidiDevice midi_device;
 
 int
 main(int argc, char* argv[])
@@ -125,10 +126,11 @@ main(int argc, char* argv[])
 //
 //		  turn_led_off(GPIOA, LED1);
 //	  }
+	  midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
 
-	  //uint8_t blah;
+
 	  turn_led_on(GPIOA, LED1);
-	  turn_led_off(GPIOB, LED2);
+	  //turn_led_off(GPIOB, LED2);
 //	  GPIO_SetBits(GPIOA, LDAC_PIN);
 //	  GPIO_ResetBits(GPIOA, DAC_CS_PIN); //DAC CS
 //	  DMA_Cmd(DMA2_Stream3, ENABLE); //enable DMA

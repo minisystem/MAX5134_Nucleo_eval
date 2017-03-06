@@ -9,7 +9,8 @@
 #include "hardware.h"
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
-
+#include "xnormidi-develop/midi.h"
+#include "xnormidi-develop/midi_device.h"
 
 void init_midi_usart(void) {
 

@@ -3,3 +3,6 @@
 /system/
 /Debug/
 /Release/
+/src/xnormidi-develop/implementations
+/src/xnormidi-develop/test
+/src/xnormidi-develop/doc

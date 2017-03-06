@@ -11,11 +11,11 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 //#include <inttypes.h>
-//#include "xnormidi-develop/midi.h"
-//#include "midi_device.h"
+#include "xnormidi-develop/midi.h"
+#include "xnormidi-develop/midi_device.h"
 
 
-//extern MidiDevice midi_device;
+extern MidiDevice midi_device;
 
 void init_midi_usart(void);
 //void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t velocity);
