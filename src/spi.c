@@ -86,8 +86,8 @@ void init_spi(void) {
 	//initialize DMA interrupt controller
 	NVIC_InitTypeDef nvic_init;
 	nvic_init.NVIC_IRQChannel = DMA2_Stream3_IRQn;
-	nvic_init.NVIC_IRQChannelPreemptionPriority = 1;
-	nvic_init.NVIC_IRQChannelSubPriority = 1;
+	nvic_init.NVIC_IRQChannelPreemptionPriority = 0;
+	nvic_init.NVIC_IRQChannelSubPriority = 0;
 	nvic_init.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic_init);
 	SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE);

@@ -215,7 +215,7 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 
 	};
 
-	//if (DMA_GetITStatus(DMA2_Stream3, DMA_IT_TCIF3)) { //test if DMA Stream transfer complete (why? Isn't that the point of the interrupt being called?)
+	if (DMA_GetITStatus(DMA2_Stream3, DMA_IT_TCIF3)) { //test if DMA Stream transfer complete (why? Isn't that the point of the interrupt being called?)
 
 		DMA_ClearITPendingBit(DMA2_Stream3, DMA_IT_TCIF3); //clear interrupt DMA IRQ flag bit
 		DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3); //isn't this the same as line above?
@@ -243,25 +243,26 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
 		DMA_Cmd(DMA2_Stream3, ENABLE); //need to re-enable DMA transfer as it turns off itself once transfer is complete
 		//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
-	//}
-
+	}
+	NVIC_ClearPendingIRQ(DMA2_Stream3_IRQn);
 		//turn_led_off(GPIOA, LED4);
 
 }
 
 void DMA1_Stream5_IRQHandler(void) {
-
+	NVIC_ClearPendingIRQ(DMA1_Stream5_IRQn); //need to manually clear to minimize interference with SPI DMA
 	//while (USART_GetFlagStatus(USART2, USART_FLAG_RXNE));
 	if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5)) {
 		//turn_led_on(GPIOA, LED4);
 		DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
-		//DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5);
+		DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5);
 		midi_device_input(&midi_device, 1, &midi_dma_buffer);
 		//trace_printf("MIDI DATA: %u\n", midi_dma_buffer);
 		//DMA_ITConfig(DMA1_Stream5, DMA_IT_TC, ENABLE);
 		//DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5 | DMA_FLAG_HTIF5 | DMA_FLAG_TEIF5 | DMA_FLAG_DMEIF5 | DMA_FLAG_FEIF5);
 		//DMA1_Stream5->NDTR = (uint32_t) 1;
-		DMA_Cmd(DMA1_Stream5, ENABLE);
+
+		//DMA_Cmd(DMA1_Stream5, ENABLE);
 	}
 
 }

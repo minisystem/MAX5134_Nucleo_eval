@@ -71,7 +71,7 @@ void init_midi_usart(void) {
 	dma_init.DMA_FIFOThreshold = DMA_FIFOThreshold_1QuarterFull ;
 	dma_init.DMA_MemoryBurst = DMA_MemoryBurst_Single ;
 	dma_init.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
-	dma_init.DMA_Mode = DMA_Mode_Normal;
+	dma_init.DMA_Mode = DMA_Mode_Circular;
 	DMA_Init(DMA1_Stream5, &dma_init);
 
 	DMA_ITConfig(DMA1_Stream5, DMA_IT_TC, ENABLE); //enable DMA transfer complete interrupt
@@ -80,8 +80,8 @@ void init_midi_usart(void) {
 
 	NVIC_InitTypeDef nvic_init;
 	nvic_init.NVIC_IRQChannel = DMA1_Stream5_IRQn;
-	nvic_init.NVIC_IRQChannelPreemptionPriority = 0;
-	nvic_init.NVIC_IRQChannelSubPriority = 0;
+	nvic_init.NVIC_IRQChannelPreemptionPriority = 1;
+	nvic_init.NVIC_IRQChannelSubPriority = 1;
 	nvic_init.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_Init(&nvic_init);
 	USART_DMACmd(USART2, USART_DMAReq_Rx, ENABLE);

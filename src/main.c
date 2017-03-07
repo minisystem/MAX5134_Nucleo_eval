@@ -132,7 +132,7 @@ main(int argc, char* argv[])
 
 	  turn_led_on(GPIOA, LED1);
 
-	  if (DMA_GetFlagStatus(DMA1_Stream5, DMA_FLAG_TEIF5)) turn_led_on(GPIOA, LED4);
+	  if (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TEIF3)) turn_led_on(GPIOB, LED2);
 	  //turn_led_off(GPIOB, LED2);
 //	  GPIO_SetBits(GPIOA, LDAC_PIN);
 //	  GPIO_ResetBits(GPIOA, DAC_CS_PIN); //DAC CS
