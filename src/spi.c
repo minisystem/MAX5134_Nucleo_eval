@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 __IO uint8_t TX_buffer[TX_BUFFER_SIZE];
-__IO uint8_t TX_buffer_index = 0;
+//__IO uint8_t TX_buffer_index = 0;
 __IO uint8_t DAC_index = 0;
 __IO uint8_t DAC_counter = 0;
 

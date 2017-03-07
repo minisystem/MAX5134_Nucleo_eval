@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 extern __IO uint8_t TX_buffer[TX_BUFFER_SIZE];
-extern __IO uint8_t TX_buffer_index;
+extern __IO uint8_t midi_dma_buffer;
 extern __IO uint8_t DAC_index;
 extern __IO uint8_t DAC_counter;
 
@@ -158,6 +158,8 @@ void SysTick_Handler(void) //currently executes every 1ms
 	timer_tick ();
 	turn_led_off(GPIOA, LED1);
 	turn_led_off(GPIOB, LED2);
+	//turn_led_off(GPIOC, LED3);
+	turn_led_off(GPIOA, LED4);
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
 }
 
@@ -187,22 +189,22 @@ void USART2_IRQHandler(void) {
 	if (USART_GetITStatus(USART2,USART_IT_RXNE)){
 
 		data = USART_ReceiveData(USART2) & 0xFF;
-		//turn_led_on(GPIOC, LED3);
+		turn_led_on(GPIOC, LED3);
 		midi_device_input(&midi_device, 1, &data);
-		//turn_led_off(GPIOC, LED3);
+		turn_led_off(GPIOC, LED3);
 		//trace_printf("MIDI DATA: %u\n", data);
 		turn_led_on(GPIOB, LED2);
 		turn_led_off(GPIOA, LED1);
 	}
 
-	//USART_ClearITPendingBit(USART2, USART_IT_RXNE);
+	USART_ClearITPendingBit(USART2, USART_IT_RXNE);
 	//NVIC_ClearPendingIRQ(USART2_IRQn);
 
 }
 
 void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 	//turn_led_off(GPIOA, LED1);
-	turn_led_on(GPIOA, LED4);
+	//turn_led_on(GPIOA, LED4);
 	//http://www.micromouseonline.com/2012/03/11/adding-dma-to-the-spi-driver-with-the-stm32f4/
 	uint8_t DAC_ctrl_byte[DAC_CHAN_NUM] = {
 
@@ -230,19 +232,37 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		}
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
 
+		//if (TX_buffer[1] == 1) turn_led_on(GPIOA, LED4); //see if there's any asynchronous zeroing of TX_buffer
 
 		GPIO_SetBits(GPIOA, LDAC_PIN); //set LDAC PIN
 		GPIO_ResetBits(GPIOA, DAC_CS_PIN); //select DAC
 
 		//now initiate next DMA transfer
 		//don't really need to reset these - these are configured in spi setup function
-		//DMA2_Stream3->NDTR = (uint32_t)TX_BUFFER_SIZE;
-		//DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
+		DMA2_Stream3->NDTR = (uint32_t)TX_BUFFER_SIZE;
+		DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
 		DMA_Cmd(DMA2_Stream3, ENABLE); //need to re-enable DMA transfer as it turns off itself once transfer is complete
 		//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
 	//}
 
-		turn_led_off(GPIOA, LED4);
+		//turn_led_off(GPIOA, LED4);
+
+}
+
+void DMA1_Stream5_IRQHandler(void) {
+
+	//while (USART_GetFlagStatus(USART2, USART_FLAG_RXNE));
+	if (DMA_GetITStatus(DMA1_Stream5, DMA_IT_TCIF5)) {
+		//turn_led_on(GPIOA, LED4);
+		DMA_ClearITPendingBit(DMA1_Stream5, DMA_IT_TCIF5);
+		//DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5);
+		midi_device_input(&midi_device, 1, &midi_dma_buffer);
+		//trace_printf("MIDI DATA: %u\n", midi_dma_buffer);
+		//DMA_ITConfig(DMA1_Stream5, DMA_IT_TC, ENABLE);
+		//DMA_ClearFlag(DMA1_Stream5, DMA_FLAG_TCIF5 | DMA_FLAG_HTIF5 | DMA_FLAG_TEIF5 | DMA_FLAG_DMEIF5 | DMA_FLAG_FEIF5);
+		//DMA1_Stream5->NDTR = (uint32_t) 1;
+		DMA_Cmd(DMA1_Stream5, ENABLE);
+	}
 
 }
 

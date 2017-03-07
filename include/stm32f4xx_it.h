@@ -54,6 +54,7 @@ void PendSV_Handler(void);
 void SysTick_Handler(void);
 void USART_IRQHandler(void); //MIDI USART
 void DMA2_Stream3_IRQHandler(void); //SPI1 DMA IRQ handler
+void DMA1_Stream5_IRQHandler(void); //USART2 DMA IRQ handler
 
 #ifdef __cplusplus
 }
