@@ -10,10 +10,10 @@
 #include <stdlib.h>
 
 __IO uint8_t TX_buffer[TX_BUFFER_SIZE];
-//__IO uint8_t TX_buffer_index = 0;
+__IO uint8_t dac_word[TX_BUFFER_SIZE];
 __IO uint8_t DAC_index = 0;
 __IO uint8_t DAC_counter = 0;
-
+__IO uint8_t dac_update_flag = 0;
 //forward declarations
 void init_spi(void);
 void spi_write_dac(uint16_t value, uint8_t channel);
@@ -80,6 +80,8 @@ void init_spi(void) {
 	dma_init.DMA_MemoryBurst = DMA_MemoryBurst_Single ;
 	dma_init.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
 	dma_init.DMA_Mode = DMA_Mode_Normal;
+	//DMA_DoubleBufferModeConfig(DMA2_Stream3, (uint32_t)dac_word, DMA_Memory_0);
+	//DMA_DoubleBufferModeCmd(DMA2_Stream3, ENABLE);
 	DMA_Init(DMA2_Stream3, &dma_init);
 	DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE); //enable DMA transfer complete interrupt
 

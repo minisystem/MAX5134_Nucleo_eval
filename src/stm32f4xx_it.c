@@ -47,10 +47,7 @@
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 
-extern __IO uint8_t TX_buffer[TX_BUFFER_SIZE];
-extern __IO uint8_t midi_dma_buffer;
-extern __IO uint8_t DAC_index;
-extern __IO uint8_t DAC_counter;
+
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
@@ -155,11 +152,11 @@ void PendSV_Handler(void)
 void SysTick_Handler(void) //currently executes every 1ms
 {
   //TimingDelay_Decrement();
-	timer_tick ();
-	turn_led_off(GPIOA, LED1);
-	turn_led_off(GPIOB, LED2);
+	//timer_tick ();
+	//turn_led_off(GPIOA, LED1);
+	//turn_led_off(GPIOB, LED2);
 	//turn_led_off(GPIOC, LED3);
-	turn_led_off(GPIOA, LED4);
+	//turn_led_off(GPIOA, LED4);
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
 }
 
@@ -216,21 +213,23 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 	};
 
 	if (DMA_GetITStatus(DMA2_Stream3, DMA_IT_TCIF3)) { //test if DMA Stream transfer complete (why? Isn't that the point of the interrupt being called?)
-
+		dac_update_flag = 1;
 		DMA_ClearITPendingBit(DMA2_Stream3, DMA_IT_TCIF3); //clear interrupt DMA IRQ flag bit
 		DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3); //isn't this the same as line above?
 		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET){}; //wait for data to be flushed from transmit buffer
 		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET){}; //wait for data to be flushed from shift register
 
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
+		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
-			DAC_counter++; //increment dac_value
+			DAC_counter++;// = DAC_counter +4; //increment dac_value
 			TX_buffer[1] = DAC_counter; //set top byte
+			TX_buffer[0] = 0;
 			//TX_buffer[2] = DAC_counter & 0xFF; //set bottom byte
 		}
-		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
+		//TX_buffer[0] = DAC_ctrl_byte[DAC_index];
 
 		//if (TX_buffer[1] == 1) turn_led_on(GPIOA, LED4); //see if there's any asynchronous zeroing of TX_buffer
 
@@ -239,8 +238,8 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 
 		//now initiate next DMA transfer
 		//don't really need to reset these - these are configured in spi setup function
-		DMA2_Stream3->NDTR = (uint32_t)TX_BUFFER_SIZE;
-		DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
+		//DMA2_Stream3->NDTR = (uint32_t)TX_BUFFER_SIZE;
+		//DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
 		DMA_Cmd(DMA2_Stream3, ENABLE); //need to re-enable DMA transfer as it turns off itself once transfer is complete
 		//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
 	}

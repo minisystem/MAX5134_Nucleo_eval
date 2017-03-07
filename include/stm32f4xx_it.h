@@ -42,6 +42,11 @@
 #define TX_BUFFER_SIZE 3
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
+ extern __IO uint8_t TX_buffer[TX_BUFFER_SIZE];
+ extern __IO uint8_t midi_dma_buffer;
+ extern __IO uint8_t DAC_index;
+ extern __IO uint8_t DAC_counter;
+ extern __IO uint8_t dac_update_flag;
 
 void NMI_Handler(void);
 void HardFault_Handler(void);

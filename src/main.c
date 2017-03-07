@@ -35,7 +35,7 @@
 #define BLINK_ON_TICKS  (TIMER_FREQUENCY_HZ /2)*.25
 #define BLINK_OFF_TICKS (TIMER_FREQUENCY_HZ - BLINK_ON_TICKS)*.25
 
-
+//#define NDEBUG 0
 
 // Sample pragmas to cope with warnings. Please note the related line at
 // the end of this function, used to pop the compiler diagnostics status.
@@ -107,15 +107,15 @@ main(int argc, char* argv[])
   while (1)
     {
 
-	  current_switch_state = read_switch(GPIOC, SWITCH_PIN);
-	  current_switch_state ^= previous_switch_state;
-	  previous_switch_state ^= current_switch_state;
-	  current_switch_state &= previous_switch_state;
-
-	  if (current_switch_state == 1) {
-		  current_switch_state ^= 1<<0;
-		  if (++led_index > 3) led_index = 0;
-	  }
+//	  current_switch_state = read_switch(GPIOC, SWITCH_PIN);
+//	  current_switch_state ^= previous_switch_state;
+//	  previous_switch_state ^= current_switch_state;
+//	  current_switch_state &= previous_switch_state;
+//
+//	  if (current_switch_state == 1) {
+//		  current_switch_state ^= 1<<0;
+//		  if (++led_index > 3) led_index = 0;
+//	  }
 
 	  //turn_off_all_leds();
 	  //turn_led_on(led[led_index].port, led[led_index].pin);
@@ -128,11 +128,12 @@ main(int argc, char* argv[])
 //		  turn_led_off(GPIOA, LED1);
 //	  }
 	  //midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
-
+	  //GPIO_SetBits(GPIOA, GPIO_Pin_4);
+	  //GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 
 	  turn_led_on(GPIOA, LED1);
-
-	  if (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TEIF3)) turn_led_on(GPIOB, LED2);
+	  turn_led_off(GPIOA, LED1);
+	  //if (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TEIF3)) turn_led_on(GPIOB, LED2);
 	  //turn_led_off(GPIOB, LED2);
 //	  GPIO_SetBits(GPIOA, LDAC_PIN);
 //	  GPIO_ResetBits(GPIOA, DAC_CS_PIN); //DAC CS
@@ -172,14 +173,14 @@ main(int argc, char* argv[])
 //
 //      }
 	  //GPIO_SetBits(GPIOA, LDAC_PIN);
+//	  if (dac_update_flag) {
+//		  dac_update_flag = 0;
+//		  TX_buffer[1] = counter;
+//	  }
 
-//	  spi_write_dac((counter << 8), DAC_CHAN_0);
-//	  spi_write_dac((counter << 8), DAC_CHAN_1);
-//	  spi_write_dac((counter << 8), DAC_CHAN_2);
-//	  spi_write_dac((counter << 8), DAC_CHAN_3);
 //	  GPIO_ResetBits(GPIOA, LDAC_PIN); //LDAC has a minimum pulse width of 33ns - once DMA SPI is working there might be a problem?
-	  ++counter;
-      ++seconds;
+	  //++counter;
+      //++seconds;
       // Count seconds on the trace device.
       //trace_printf("Second %u\n", seconds);
       //printf("hey there\n");

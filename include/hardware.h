@@ -38,6 +38,6 @@
 #define DAC_CHAN_2 0b00010100
 #define DAC_CHAN_3 0b00011000
 
-#define DAC_CHAN_NUM 4 //there are 4 DAC channels on MAX5134
+#define DAC_CHAN_NUM 4 //there are 4 DAC channels on MAX5134 0, 1, 2, 3
 
 #endif /* INCLUDE_HARDWARE_H_ */
