@@ -228,19 +228,27 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3); //isn't this the same as line above?
 		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET){}; //wait for data to be flushed from transmit buffer
 		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET){}; //wait for data to be flushed from shift register
-
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
+
+		uint16_t data_port_mask = DATA_PORT->ODR & 0xFFFC; //clear bottom 3 bits
+		uint16_t data_out = data_port_mask | DAC_index;
+		DATA_PORT->ODR = data_out;
+		GPIO_ResetBits(DAC_MUX_PORT, DAC_MUX_1);
+
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
+
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
 			DAC_counter+= 4;// = DAC_counter +4; //increment dac_value
-			phase_accumulator += 256;
+			phase_accumulator += 1024;
 			//TX_buffer[1] = DAC_counter; //set top byte
 			TX_buffer[0] = 0; //this is the magic right here for some reason - not setting this causes incoming MIDI USART messages to screw up DAC updating
-			//WHY? WHY GODDAMMIT WHY? //this is control byte is 'No operation'
-			TX_buffer[1] = sine_lut[DAC_counter] >> 8;
-			TX_buffer[2] = sine_lut[DAC_counter] & 0xFF; //set bottom byte
+			//WHY? WHY GODDAMMIT WHY? //this control byte is 'No operation'
+			TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
+			TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
+			GPIO_SetBits(DAC_MUX_PORT, DAC_MUX_1);
+
 		}
 		//TX_buffer[0] = DAC_ctrl_byte[DAC_index];
 

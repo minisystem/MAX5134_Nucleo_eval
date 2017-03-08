@@ -52,7 +52,7 @@ void init_spi(void) {
 	spi_init.SPI_CPOL = SPI_CPOL_Low; //5134 uses low to high and high to low clock transitions. ie. idle state is LOW
 	spi_init.SPI_CPHA = SPI_CPHA_2Edge; //clock phase - data is clocked on falling edge of clock pulse
 	spi_init.SPI_NSS = SPI_NSS_Soft; //DAC chip select is handled in software
-	spi_init.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2; //this should be APB2 clock/2, so 25 MHz SPI clock speed?
+	spi_init.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2; //APB2 clock/2, so 25 MHz SPI clock speed
 	spi_init.SPI_FirstBit = SPI_FirstBit_MSB; //check datasheet
 	spi_init.SPI_CRCPolynomial = 7; //what is this?
 	SPI_Init(SPI1, &spi_init);
