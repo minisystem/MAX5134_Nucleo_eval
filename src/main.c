@@ -89,6 +89,8 @@ main(int argc, char* argv[])
   init_midi_usart();
   init_spi();
 
+  init_sine_lut();
+
   midi_device_init(&midi_device);
   //register callbacks
   midi_register_noteon_callback(&midi_device, note_on_event);

@@ -35,6 +35,7 @@
 #include "hardware.h"
 #include "diag/Trace.h"
 #include "midi.h"
+#include <math.h>
 //#include "xnormidi-develop/midi.h"
 //#include "midi_device.h"
 
@@ -51,6 +52,15 @@
 
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+
+static uint16_t sine_lut[256];
+void init_sine_lut(void);
+
+void init_sine_lut(void) {
+	for (int i = 0; i < 256; i++) {
+		sine_lut[i]=(cos((i/255.0+1.0)*3.14)+1.0)/2.0*65535.0;
+	}
+}
 
 /******************************************************************************/
 /*            Cortex-M4 Processor Exceptions Handlers                         */
@@ -224,10 +234,13 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
-			DAC_counter++;// = DAC_counter +4; //increment dac_value
-			TX_buffer[1] = DAC_counter; //set top byte
-			TX_buffer[0] = 0;
-			//TX_buffer[2] = DAC_counter & 0xFF; //set bottom byte
+			DAC_counter+= 4;// = DAC_counter +4; //increment dac_value
+			phase_accumulator += 256;
+			//TX_buffer[1] = DAC_counter; //set top byte
+			TX_buffer[0] = 0; //this is the magic right here for some reason - not setting this causes incoming MIDI USART messages to screw up DAC updating
+			//WHY? WHY GODDAMMIT WHY? //this is control byte is 'No operation'
+			TX_buffer[1] = sine_lut[DAC_counter] >> 8;
+			TX_buffer[2] = sine_lut[DAC_counter] & 0xFF; //set bottom byte
 		}
 		//TX_buffer[0] = DAC_ctrl_byte[DAC_index];
 

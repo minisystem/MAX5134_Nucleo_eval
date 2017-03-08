@@ -13,6 +13,7 @@ __IO uint8_t TX_buffer[TX_BUFFER_SIZE];
 __IO uint8_t dac_word[TX_BUFFER_SIZE];
 __IO uint8_t DAC_index = 0;
 __IO uint8_t DAC_counter = 0;
+__IO uint16_t phase_accumulator = 0;
 __IO uint8_t dac_update_flag = 0;
 //forward declarations
 void init_spi(void);
