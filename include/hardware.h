@@ -13,16 +13,25 @@
 #include "stm32f4xx.h"
 
 
-#define LED1_PORT	RCC_AHB1Periph_GPIOA //PORTA
-#define LED2_PORT	RCC_AHB1Periph_GPIOB //PORTB
-#define LED3_PORT	RCC_AHB1Periph_GPIOC //PORTC
-#define LED4_PORT	RCC_AHB1Periph_GPIOA //PORTA
+#define LED1_PORT		RCC_AHB1Periph_GPIOA //PORTA
+#define LED2_PORT		RCC_AHB1Periph_GPIOB //PORTB
+#define LED3_PORT		RCC_AHB1Periph_GPIOC //PORTC
+#define LED4_PORT		RCC_AHB1Periph_GPIOA //PORTA
 
-#define LDAC_PIN GPIO_Pin_9
-#define DAC_CS_PIN GPIO_Pin_8
+#define LDAC_PIN 		GPIO_Pin_9
+#define DAC_CS_PIN 		GPIO_Pin_8
 
+#define DAC_MUX_0		GPIO_Pin_3
+#define DAC_MUX_1 		GPIO_Pin_4
+#define DAC_MUX_PORT 	GPIOB
+#define D0				GPIO_Pin_0
+#define D1				GPIO_Pin_1
+#define D2				GPIO_Pin_2
+#define DATA_PORT		GPIOA
 #define SWITCH_PORT 2
 #define SWITCH_PIN	7
+
+
 
 
 #define LED1	4 //PA4

@@ -91,15 +91,16 @@ void init_midi_usart(void) {
 
 void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t velocity) {
 
-	turn_led_on(GPIOC, LED3);
+	turn_led_on(GPIOA, LED1);
 
 }
 void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t velocity) {
 
-	turn_led_off(GPIOC, LED3);
+	turn_led_off(GPIOA, LED1);
 }
 void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 
-	turn_led_on(GPIOA, LED4);
+	//turn_led_on(GPIOA, LED4);
+	GPIO_ToggleBits(GPIOA, GPIO_Pin_10);
 
 }

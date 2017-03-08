@@ -12,6 +12,7 @@
 //forward declarations
 
 void setup_system_clock(void);
+void gpio_init(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);
 
 void setup_system_clock(void) {
 
@@ -40,6 +41,19 @@ void setup_system_clock(void) {
 	SystemCoreClockUpdate(); //need to call this to update system clock after changes made.
 
 
+}
+
+void gpio_init(GPIO_TypeDef * gpio_port, uint32_t gpio_pin) {
+
+	//clock is started elsewhere
+	  GPIO_InitTypeDef gpio_init;
+
+	  gpio_init.GPIO_Pin = gpio_pin;
+	  gpio_init.GPIO_Mode = GPIO_Mode_OUT;
+	  gpio_init.GPIO_Speed = GPIO_Fast_Speed;
+	  gpio_init.GPIO_OType = GPIO_OType_PP;
+	  gpio_init.GPIO_PuPd = GPIO_PuPd_UP;
+	  GPIO_Init(gpio_port, &gpio_init);
 }
 
 
