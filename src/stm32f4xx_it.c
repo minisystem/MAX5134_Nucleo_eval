@@ -211,7 +211,7 @@ void USART2_IRQHandler(void) {
 
 void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 	//turn_led_off(GPIOA, LED1);
-	//turn_led_on(GPIOA, LED4);
+	turn_led_on(GPIOC, LED3);
 	//http://www.micromouseonline.com/2012/03/11/adding-dma-to-the-spi-driver-with-the-stm32f4/
 	uint8_t DAC_ctrl_byte[DAC_CHAN_NUM] = {
 
@@ -230,13 +230,8 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET){}; //wait for data to be flushed from shift register
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 
-		uint16_t data_port_mask = DATA_PORT->ODR & 0xFFFC; //clear bottom 3 bits
-		uint16_t data_out = data_port_mask | DAC_index;
-		DATA_PORT->ODR = data_out;
-		GPIO_ResetBits(DAC_MUX_PORT, DAC_MUX_1);
-
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
-
+		GPIO_ResetBits(DAC_MUX_PORT, DAC_MUX_1);
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
@@ -247,6 +242,15 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 			//WHY? WHY GODDAMMIT WHY? //this control byte is 'No operation'
 			TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
 			TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
+
+			if (dac_mux_addr++ > 3) {
+
+				dac_mux_addr = 0;
+
+			}
+			uint16_t data_port_mask = DATA_PORT->ODR & 0xFFFC; //clear bottom 3 bits
+			uint16_t data_out = data_port_mask | dac_mux_addr;
+			DATA_PORT->ODR = data_out;
 			GPIO_SetBits(DAC_MUX_PORT, DAC_MUX_1);
 
 		}
@@ -265,7 +269,7 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
 	}
 	NVIC_ClearPendingIRQ(DMA2_Stream3_IRQn);
-		//turn_led_off(GPIOA, LED4);
+	turn_led_off(GPIOC, LED3);
 
 }
 

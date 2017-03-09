@@ -47,6 +47,7 @@
  extern __IO uint8_t DAC_index;
  extern __IO uint8_t DAC_counter;
  extern __IO uint16_t phase_accumulator;
+ extern __IO uint8_t dac_mux_addr;
  extern __IO uint8_t dac_update_flag;
 
 void NMI_Handler(void);
