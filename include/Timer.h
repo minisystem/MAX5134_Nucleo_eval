@@ -17,7 +17,7 @@ typedef uint32_t timer_ticks_t;
 extern volatile timer_ticks_t timer_delayCount;
 
 extern void
-timer_start (void);
+timer_start (uint32_t systick_freq);
 
 extern void
 timer_sleep (timer_ticks_t ticks);

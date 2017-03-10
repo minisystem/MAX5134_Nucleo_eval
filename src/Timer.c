@@ -24,10 +24,14 @@ volatile timer_ticks_t timer_delayCount;
 // ----------------------------------------------------------------------------
 
 void
-timer_start (void)
+timer_start (uint32_t systick_freq)
 {
   // Use SysTick as reference for the delay loops.
-  SysTick_Config (SystemCoreClock / TIMER_FREQUENCY_HZ);
+  //SysTick_Config (SystemCoreClock / 500u);//TIMER_FREQUENCY_HZ);
+
+	RCC_ClocksTypeDef rcc_clocks;
+	RCC_GetClocksFreq(&rcc_clocks);
+	SysTick_Config(rcc_clocks.HCLK_Frequency/systick_freq);
 }
 
 void

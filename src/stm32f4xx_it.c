@@ -164,10 +164,12 @@ void SysTick_Handler(void) //currently executes every 1ms
   //TimingDelay_Decrement();
 	//timer_tick ();
 	//turn_led_off(GPIOA, LED1);
+	GPIO_SetBits(GPIOA, GPIO_Pin_4);
 	//turn_led_off(GPIOB, LED2);
 	//turn_led_off(GPIOC, LED3);
 	//turn_led_off(GPIOA, LED4);
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
+	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 }
 
 /******************************************************************************/

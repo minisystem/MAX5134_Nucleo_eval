@@ -60,7 +60,7 @@ main(int argc, char* argv[])
 
 
 
-  timer_start();
+  timer_start(2000); //set systick @2KHz
 
   blink_led_init(GPIOA, LED1_PORT, LED1);
   blink_led_init(GPIOB, LED2_PORT, LED2);
