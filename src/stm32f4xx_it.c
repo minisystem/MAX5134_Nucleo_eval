@@ -33,6 +33,7 @@
 #include "Timer.h"
 #include "leds.h"
 #include "hardware.h"
+#include "adc.h"
 #include "diag/Trace.h"
 #include "midi.h"
 #include <math.h>
@@ -170,6 +171,19 @@ void SysTick_Handler(void) //currently executes every 1ms
 	//turn_led_off(GPIOA, LED4);
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
 	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+//	if (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)) {
+//		uint16_t new_adc_value = ADC_GetConversionValue(ADC1);
+//		if (adc_buffer != new_adc_value) {
+//			adc_buffer = new_adc_value;
+//			trace_printf("ADC VALUE: %u\n", adc_buffer);
+//		}
+//		ADC_SoftwareStartConv(ADC1)
+//	}
+	if (adc_new_value != adc_buffer) {
+
+		adc_new_value = adc_buffer;
+		//trace_printf("ADC VALUE: %u\n", adc_buffer);
+	}
 }
 
 /******************************************************************************/

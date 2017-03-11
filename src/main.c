@@ -17,6 +17,7 @@
 #include "hardware.h"
 #include "switches.h"
 #include "midi.h"
+#include "adc.h"
 
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
@@ -60,7 +61,7 @@ main(int argc, char* argv[])
 
 
 
-  timer_start(2000); //set systick @2KHz
+  timer_start(100); //set systick @2KHz
 
   blink_led_init(GPIOA, LED1_PORT, LED1);
   blink_led_init(GPIOB, LED2_PORT, LED2);
@@ -119,9 +120,8 @@ main(int argc, char* argv[])
 
 
   };
-  //DMA2_Stream3->M0AR = (uint32_t)tx_buffer;
 
-  //spi_write_dac(0xFFF0, DAC_CHAN_0);
+  init_adc();
 
   // Infinite loop
   while (1)
