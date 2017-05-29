@@ -18,19 +18,21 @@
 #define LED3_PORT		RCC_AHB1Periph_GPIOC //PORTC
 #define LED4_PORT		RCC_AHB1Periph_GPIOA //PORTA
 
-#define LDAC_PIN 		GPIO_Pin_9
-#define DAC_CS_PIN 		GPIO_Pin_8
+//MAX5134 control pins
+#define LDAC_PIN 		GPIO_Pin_7
+#define DAC_CS_PIN 		GPIO_Pin_4
 
-#define DAC_MUX_0		GPIO_Pin_3
-#define DAC_MUX_1 		GPIO_Pin_4
+//12 bit STM32 DAC multiplexing control pins
 #define DAC_MUX_PORT 	GPIOB
-#define D0				GPIO_Pin_0
-#define D1				GPIO_Pin_1
-#define D2				GPIO_Pin_2
-#define DATA_PORT		GPIOA
+#define D0				GPIO_Pin_1
+#define D1				GPIO_Pin_2
+#define MUX_SEL_PORT	GPIOA
+#define MUX_SEL			GPIO_Pin_11
+
 #define SWITCH_PORT 2
 #define SWITCH_PIN	7
 
+#define MIDI_LED	GPIO_Pin_6
 
 
 

@@ -12,7 +12,7 @@
 //forward declarations
 
 void setup_system_clock(void);
-void gpio_init(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);
+void gpio_init_output(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);
 
 void setup_system_clock(void) {
 
@@ -43,7 +43,7 @@ void setup_system_clock(void) {
 
 }
 
-void gpio_init(GPIO_TypeDef * gpio_port, uint32_t gpio_pin) {
+void gpio_init_output(GPIO_TypeDef * gpio_port, uint32_t gpio_pin) {
 
 	//clock is started elsewhere
 	  GPIO_InitTypeDef gpio_init;

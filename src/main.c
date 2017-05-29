@@ -28,15 +28,6 @@
 // but can be rerouted to any device or completely suppressed, by
 // changing the definitions required in system/src/diag/trace_impl.c
 // (currently OS_USE_TRACE_ITM, OS_USE_TRACE_SEMIHOSTING_DEBUG/_STDOUT).
-//
-
-// ----- Timing definitions -------------------------------------------------
-
-// Set number of ticks for blink timer - fewer ticks for faster blinking
-#define BLINK_ON_TICKS  (TIMER_FREQUENCY_HZ /2)*.25
-#define BLINK_OFF_TICKS (TIMER_FREQUENCY_HZ - BLINK_ON_TICKS)*.25
-
-//#define NDEBUG 0
 
 // Sample pragmas to cope with warnings. Please note the related line at
 // the end of this function, used to pop the compiler diagnostics status.
@@ -63,32 +54,28 @@ main(int argc, char* argv[])
 
   timer_start(100); //set systick @2KHz
 
-  blink_led_init(GPIOA, LED1_PORT, LED1);
-  blink_led_init(GPIOB, LED2_PORT, LED2);
-  blink_led_init(GPIOC, LED3_PORT, LED3);
-  blink_led_init(GPIOA, LED4_PORT, LED4);
-  
+
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA , ENABLE);
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB , ENABLE);
+//  blink_led_init(GPIOA, LED1_PORT, LED1);
+//  blink_led_init(GPIOB, LED2_PORT, LED2);
+//  blink_led_init(GPIOC, LED3_PORT, LED3);
+//  blink_led_init(GPIOA, LED4_PORT, LED4);
   //init data port and dac mux pins
-  gpio_init(DAC_MUX_PORT, DAC_MUX_0);
-  gpio_init(DAC_MUX_PORT, DAC_MUX_1);
-  gpio_init(DATA_PORT, D0);
-  gpio_init(DATA_PORT, D1);
-  gpio_init(DATA_PORT, D2);
-
-  //set DAC multiplexor channel select lines to HIGH
-  GPIO_SetBits(DAC_MUX_PORT, DAC_MUX_0);
-  GPIO_SetBits(DAC_MUX_PORT, DAC_MUX_1);
-
-  //set data bits to LOW
-  GPIO_ResetBits(DATA_PORT, D0);
-  GPIO_ResetBits(DATA_PORT, D1);
-  GPIO_ResetBits(DATA_PORT, D2);
-
-
-
-  initialize_switches(SWITCH_PORT, SWITCH_PIN);
-  init_midi_usart();
+  //gpio_init_output(DAC_MUX_PORT, D0);
+  //gpio_init_output(DAC_MUX_PORT, D1);
+  //gpio_init_output(GPIOA, D0);
+  //gpio_init_output(GPIOA, D1);
   init_spi();
+  gpio_init_output(GPIOA, MIDI_LED);
+  GPIO_SetBits(GPIOA, MIDI_LED);
+  //set data bits to LOW
+  //GPIO_ResetBits(GPIOB, D0);
+  //GPIO_ResetBits(GPIOB, D1);
+
+  //initialize_switches(SWITCH_PORT, SWITCH_PIN);
+  init_midi_usart();
+
 
   init_sine_lut();
 
@@ -121,7 +108,7 @@ main(int argc, char* argv[])
 
   };
 
-  init_adc();
+  //init_adc();
 
   // Infinite loop
   while (1)
@@ -151,8 +138,8 @@ main(int argc, char* argv[])
 	  //GPIO_SetBits(GPIOA, GPIO_Pin_4);
 	  //GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 
-	  turn_led_on(GPIOB, LED2);
-	  turn_led_off(GPIOB, LED2);
+	  //turn_led_on(GPIOB, LED2);
+	  //turn_led_off(GPIOB, LED2);
 	  //if (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TEIF3)) turn_led_on(GPIOB, LED2);
 	  //turn_led_off(GPIOB, LED2);
 //	  GPIO_SetBits(GPIOA, LDAC_PIN);

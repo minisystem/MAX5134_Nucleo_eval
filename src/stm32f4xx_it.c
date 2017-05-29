@@ -165,12 +165,13 @@ void SysTick_Handler(void) //currently executes every 1ms
   //TimingDelay_Decrement();
 	//timer_tick ();
 	//turn_led_off(GPIOA, LED1);
-	GPIO_SetBits(GPIOA, GPIO_Pin_4);
+	//GPIO_SetBits(GPIOA, GPIO_Pin_4);
 	//turn_led_off(GPIOB, LED2);
 	//turn_led_off(GPIOC, LED3);
 	//turn_led_off(GPIOA, LED4);
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
-	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+	//GPIO_ToggleBits(GPIOA, MIDI_LED);
+	//GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 //	if (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)) {
 //		uint16_t new_adc_value = ADC_GetConversionValue(ADC1);
 //		if (adc_buffer != new_adc_value) {
@@ -212,12 +213,9 @@ void USART2_IRQHandler(void) {
 	if (USART_GetITStatus(USART2,USART_IT_RXNE)){
 
 		data = USART_ReceiveData(USART2) & 0xFF;
-		turn_led_on(GPIOC, LED3);
 		midi_device_input(&midi_device, 1, &data);
-		turn_led_off(GPIOC, LED3);
 		//trace_printf("MIDI DATA: %u\n", data);
-		turn_led_on(GPIOB, LED2);
-		turn_led_off(GPIOA, LED1);
+
 	}
 
 	USART_ClearITPendingBit(USART2, USART_IT_RXNE);
@@ -225,9 +223,9 @@ void USART2_IRQHandler(void) {
 
 }
 
-void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
-	//turn_led_off(GPIOA, LED1);
-	turn_led_on(GPIOC, LED3);
+void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
+	//GPIO_ToggleBits(GPIOA, MIDI_LED);
+	//GPIO_ToggleBits(GPIOA, GPIO_Pin_10);
 	//http://www.micromouseonline.com/2012/03/11/adding-dma-to-the-spi-driver-with-the-stm32f4/
 	uint8_t DAC_ctrl_byte[DAC_CHAN_NUM] = {
 
@@ -238,16 +236,16 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 
 	};
 
-	if (DMA_GetITStatus(DMA2_Stream3, DMA_IT_TCIF3)) { //test if DMA Stream transfer complete (why? Isn't that the point of the interrupt being called?)
+	if (DMA_GetITStatus(DMA2_Stream4, DMA_IT_TCIF4)) { //test if DMA Stream transfer complete (why? Isn't that the point of the interrupt being called?)
 		dac_update_flag = 1;
-		DMA_ClearITPendingBit(DMA2_Stream3, DMA_IT_TCIF3); //clear interrupt DMA IRQ flag bit
-		DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3); //isn't this the same as line above?
+		DMA_ClearITPendingBit(DMA2_Stream4, DMA_IT_TCIF4); //clear interrupt DMA IRQ flag bit
+		DMA_ClearFlag(DMA2_Stream4, DMA_FLAG_TCIF4); //isn't this the same as line above?
 		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_TXE) == RESET){}; //wait for data to be flushed from transmit buffer
 		//while (SPI_I2S_GetFlagStatus(SPI1, SPI_I2S_FLAG_BSY) == SET){}; //wait for data to be flushed from shift register
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
-		GPIO_ResetBits(DAC_MUX_PORT, DAC_MUX_1);
+		//GPIO_ResetBits(DAC_MUX_PORT, DAC_MUX_1);
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
@@ -258,16 +256,16 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 			//WHY? WHY GODDAMMIT WHY? //this control byte is 'No operation'
 			TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
 			TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
-
-			if (dac_mux_addr++ > 3) {
-
-				dac_mux_addr = 0;
-
-			}
-			uint16_t data_port_mask = DATA_PORT->ODR & 0xFFFC; //clear bottom 3 bits
-			uint16_t data_out = data_port_mask | dac_mux_addr;
-			DATA_PORT->ODR = data_out;
-			GPIO_SetBits(DAC_MUX_PORT, DAC_MUX_1);
+//this bit is for hardware multiplexed DAC - in M4's case this needs to be moved to internal 12 bit DAC code
+//			if (dac_mux_addr++ > 3) {
+//
+//				dac_mux_addr = 0;
+//
+//			}
+//			uint16_t data_port_mask = GPIOB->ODR & 0xFFFC; //clear bottom 3 bits
+//			uint16_t data_out = data_port_mask | dac_mux_addr;
+//			GPIOB->ODR = data_out;
+//			GPIO_SetBits(DAC_MUX_PORT, DAC_MUX_1);
 
 		}
 		//TX_buffer[0] = DAC_ctrl_byte[DAC_index];
@@ -281,11 +279,11 @@ void DMA2_Stream3_IRQHandler(void) { //SPI1 DMA IRQ Handler
 		//don't really need to reset these - these are configured in spi setup function
 		//DMA2_Stream3->NDTR = (uint32_t)TX_BUFFER_SIZE;
 		//DMA2_Stream3->M0AR = (uint32_t)TX_buffer;
-		DMA_Cmd(DMA2_Stream3, ENABLE); //need to re-enable DMA transfer as it turns off itself once transfer is complete
+		DMA_Cmd(DMA2_Stream4, ENABLE); //need to re-enable DMA transfer as it turns off itself once transfer is complete
 		//DMA_ITConfig(DMA2_Stream3, DMA_IT_TC, ENABLE);
 	}
-	NVIC_ClearPendingIRQ(DMA2_Stream3_IRQn);
-	turn_led_off(GPIOC, LED3);
+	NVIC_ClearPendingIRQ(DMA2_Stream4_IRQn);
+
 
 }
 
