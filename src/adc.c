@@ -24,12 +24,12 @@ void init_adc(void) {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 
 	GPIO_InitTypeDef gpio_init;
-	gpio_init.GPIO_Pin = GPIO_Pin_1; //ADC input is ADC1
+	gpio_init.GPIO_Pin = SLEW_POT;
 	gpio_init.GPIO_Speed = GPIO_Fast_Speed;
 	gpio_init.GPIO_Mode = GPIO_Mode_AN;
 	//gpio_init.GPIO_OType = GPIO_OType_PP; //not sure which type is needed
 	gpio_init.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_Init(GPIOC, &gpio_init);
+	GPIO_Init(GPIOA, &gpio_init);
 
 	//ADC Common Init
 	ADC_CommonInitTypeDef adc_common_init;
@@ -74,7 +74,7 @@ void init_adc(void) {
 	ADC_DMARequestAfterLastTransferCmd(ADC1, ENABLE);
 	ADC_DMACmd(ADC1, ENABLE);
 
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_11, 1, ADC_SampleTime_144Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_144Cycles);
 	ADC_Cmd(ADC1, ENABLE);
 	ADC_SoftwareStartConv(ADC1);
 

@@ -12,12 +12,6 @@
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
 
-
-#define LED1_PORT		RCC_AHB1Periph_GPIOA //PORTA
-#define LED2_PORT		RCC_AHB1Periph_GPIOB //PORTB
-#define LED3_PORT		RCC_AHB1Periph_GPIOC //PORTC
-#define LED4_PORT		RCC_AHB1Periph_GPIOA //PORTA
-
 //MAX5134 control pins
 #define LDAC_PIN 		GPIO_Pin_7
 #define DAC_CS_PIN 		GPIO_Pin_4
@@ -29,17 +23,26 @@
 #define MUX_SEL_PORT	GPIOA
 #define MUX_SEL			GPIO_Pin_11
 
-#define SWITCH_PORT 2
-#define SWITCH_PIN	7
-
 #define MIDI_LED	GPIO_Pin_6
 
+//define gate pins
+#define GATE_PORT GPIOB
+#define GATE_1 GPIO_Pin_8
+#define GATE_2 GPIO_Pin_9
+#define GATE_3 GPIO_Pin_10
+#define GATE_4 GPIO_Pin_11
 
+//define GATE LEDs
+#define GATE_LED_PORT GPIOB
+#define GATE_LED_1 GPIO_Pin_12
+#define GATE_LED_2 GPIO_Pin_13
+#define GATE_LED_3 GPIO_Pin_14
+#define GATE_LED_4 GPIO_Pin_15
 
-#define LED1	4 //PA4
-#define LED2	0 //PB0
-#define LED3	0 //PC0
-#define LED4	10 //PA10
+//define ADC inputs
+#define ADC_PORT GPIOA
+#define SLEW_POT GPIO_Pin_0
+#define RATE_POT GPIO_Pin_1
 
 #define MIDI_RX_PIN	3 //PA3
 

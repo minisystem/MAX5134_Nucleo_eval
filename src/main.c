@@ -18,6 +18,8 @@
 #include "switches.h"
 #include "midi.h"
 #include "adc.h"
+#include "spi.h"
+#include "system.h"
 
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
@@ -57,21 +59,11 @@ main(int argc, char* argv[])
 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA , ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB , ENABLE);
-//  blink_led_init(GPIOA, LED1_PORT, LED1);
-//  blink_led_init(GPIOB, LED2_PORT, LED2);
-//  blink_led_init(GPIOC, LED3_PORT, LED3);
-//  blink_led_init(GPIOA, LED4_PORT, LED4);
-  //init data port and dac mux pins
-  //gpio_init_output(DAC_MUX_PORT, D0);
-  //gpio_init_output(DAC_MUX_PORT, D1);
-  //gpio_init_output(GPIOA, D0);
-  //gpio_init_output(GPIOA, D1);
+
   init_spi();
   gpio_init_output(GPIOA, MIDI_LED);
-  GPIO_SetBits(GPIOA, MIDI_LED);
-  //set data bits to LOW
-  //GPIO_ResetBits(GPIOB, D0);
-  //GPIO_ResetBits(GPIOB, D1);
+  //GPIO_SetBits(GPIOA, MIDI_LED);
+
 
   //initialize_switches(SWITCH_PORT, SWITCH_PIN);
   init_midi_usart();
@@ -85,30 +77,7 @@ main(int argc, char* argv[])
   midi_register_noteoff_callback(&midi_device, note_off_event);
   midi_register_realtime_callback(&midi_device, real_time_event);
 
-  uint8_t counter = 0;
-  uint32_t current_switch_state = 0;
-  uint32_t previous_switch_state = 0;
-  uint8_t led_index = 0;
-  uint32_t seconds = 0;
-  struct led led[4] = {
-
-  	{GPIOA, LED1},
-  	{GPIOB, LED2},
-  	{GPIOC, LED3},
-  	{GPIOA, LED4}
-
-  };
-
-  uint8_t tx_buffer[TX_BUFFER_SIZE] = {
-
-	DAC_CHAN_1,
-	0,
-	0
-
-
-  };
-
-  //init_adc();
+  init_adc();
 
   // Infinite loop
   while (1)
@@ -124,9 +93,7 @@ main(int argc, char* argv[])
 //		  if (++led_index > 3) led_index = 0;
 //	  }
 
-	  //turn_off_all_leds();
-	  //turn_led_on(led[led_index].port, led[led_index].pin);
-	  //turn_led_on(GPIOA, LED1);
+
 //	  if (read_switch(GPIOC, SWITCH_PIN) == 1) {
 //
 //		  turn_led_on(GPIOA, LED1);
@@ -134,63 +101,7 @@ main(int argc, char* argv[])
 //
 //		  turn_led_off(GPIOA, LED1);
 //	  }
-	  //midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
-	  //GPIO_SetBits(GPIOA, GPIO_Pin_4);
-	  //GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 
-	  //turn_led_on(GPIOB, LED2);
-	  //turn_led_off(GPIOB, LED2);
-	  //if (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TEIF3)) turn_led_on(GPIOB, LED2);
-	  //turn_led_off(GPIOB, LED2);
-//	  GPIO_SetBits(GPIOA, LDAC_PIN);
-//	  GPIO_ResetBits(GPIOA, DAC_CS_PIN); //DAC CS
-//	  DMA_Cmd(DMA2_Stream3, ENABLE); //enable DMA
-//	  SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Tx, ENABLE); //enable SPI1 TX request
-//	  while (DMA_GetFlagStatus(DMA2_Stream3, DMA_FLAG_TCIF3) == RESET);
-//	  GPIO_SetBits(GPIOA, DAC_CS_PIN);
-//	  DMA_ClearFlag(DMA2_Stream3, DMA_FLAG_TCIF3);
-//	  spi_dma_write((counter << 8), DAC_CHAN_0);
-//	  spi_dma_write((counter << 8), DAC_CHAN_1);
-//	  spi_dma_write((counter << 8), DAC_CHAN_2);
-//	  spi_dma_write((counter << 8), DAC_CHAN_3);
-//	  GPIO_ResetBits(GPIOA, LDAC_PIN);
-	  //DMA_Cmd(DMA2_Stream3, DISABLE);
-	  //SPI_I2S_DMACmd(SPI1, SPI_I2S_DMAReq_Rx, DISABLE);
-	  //tx_buffer[1] = (counter);
-	  //turn_led_off(GPIOA, LED1);
-//	  if (USART_GetFlagStatus(USART2, USART_FLAG_RXNE) != RESET) {
-//		  turn_led_off(GPIOA, LED1);
-//		  blah = USART2->DR & 0xff;
-//		  trace_printf("MIDI DATA: %u\n", blah);
-//	  }
-//      for (int i = 1; i < 4; i++) {
-//
-//    	  turn_led_off(led[i-1].port, led[i-1].pin);
-//    	  turn_led_on(led[i].port, led[i].pin);
-//    	  //timer_sleep(BLINK_OFF_TICKS);
-//
-//      }
-
-//      for (int i = 3; i > 0; i--) {
-//
-//    	  turn_led_off(led[i].port, led[i].pin);
-//    	  turn_led_on(led[i-1].port, led[i-1].pin);
-//    	  //timer_sleep(BLINK_OFF_TICKS);
-//
-//
-//      }
-	  //GPIO_SetBits(GPIOA, LDAC_PIN);
-//	  if (dac_update_flag) {
-//		  dac_update_flag = 0;
-//		  TX_buffer[1] = counter;
-//	  }
-
-//	  GPIO_ResetBits(GPIOA, LDAC_PIN); //LDAC has a minimum pulse width of 33ns - once DMA SPI is working there might be a problem?
-	  //++counter;
-      //++seconds;
-      // Count seconds on the trace device.
-      //trace_printf("Second %u\n", seconds);
-      //printf("hey there\n");
     }
   // Infinite loop, never return.
 }

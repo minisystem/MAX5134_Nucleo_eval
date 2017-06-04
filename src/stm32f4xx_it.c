@@ -180,10 +180,18 @@ void SysTick_Handler(void) //currently executes every 1ms
 //		}
 //		ADC_SoftwareStartConv(ADC1)
 //	}
-	if (adc_new_value != adc_buffer) {
-
-		adc_new_value = adc_buffer;
+	//if (adc_new_value != adc_buffer) {
+	int adc_change = adc_buffer - adc_new_value;
+	adc_new_value = adc_new_value + (adc_change >> 4);
+		//adc_new_value = adc_buffer;
 		//trace_printf("ADC VALUE: %u\n", adc_buffer);
+	//}
+
+	if (adc_new_value > 2048) {
+
+		GPIO_SetBits(GPIOA, MIDI_LED);
+	} else {
+		GPIO_ResetBits(GPIOA, MIDI_LED);
 	}
 }
 
@@ -254,8 +262,24 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 			//TX_buffer[1] = DAC_counter; //set top byte
 			TX_buffer[0] = 0; //this is the magic right here for some reason - not setting this causes incoming MIDI USART messages to screw up DAC updating
 			//WHY? WHY GODDAMMIT WHY? //this control byte is 'No operation'
-			TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
-			TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
+			//TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
+			//TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
+			uint16_t DAC_value = adc_new_value << 4;
+			for (int i = 1; i < 12; i++) {
+
+				if ((adc_new_value < 341*i) && (adc_new_value > 341*(i-1))) {
+
+					DAC_value = 3235 + 4792*i;
+
+				}
+
+			}
+
+
+
+			//DAC_value = 65535;
+			TX_buffer[1] = DAC_value >> 8;
+			TX_buffer[2] = DAC_value & 0xFF;
 //this bit is for hardware multiplexed DAC - in M4's case this needs to be moved to internal 12 bit DAC code
 //			if (dac_mux_addr++ > 3) {
 //
