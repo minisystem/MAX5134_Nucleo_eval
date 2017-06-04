@@ -11,8 +11,8 @@
 
 #include "stm32f4xx.h"
 
-extern __IO uint16_t adc_buffer;
-extern __IO uint16_t adc_new_value;
+extern __IO uint16_t adc_buffer[2];
+extern __IO uint16_t adc_new_value[2];
 
 void init_adc(void);
 

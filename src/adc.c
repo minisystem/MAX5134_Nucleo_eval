@@ -11,8 +11,8 @@
 #include "hardware.h"
 #include <stdlib.h>
 
-__IO uint16_t adc_buffer = 0;//ADC1->DR;
-__IO uint16_t adc_new_value = 0;
+__IO uint16_t adc_buffer[2] = {0,0};//ADC1->DR;
+__IO uint16_t adc_new_value[2] = {0,0};
 
 void init_adc(void) {
 
@@ -24,7 +24,7 @@ void init_adc(void) {
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 
 	GPIO_InitTypeDef gpio_init;
-	gpio_init.GPIO_Pin = SLEW_POT;
+	gpio_init.GPIO_Pin = SLEW_POT | RATE_POT;
 	gpio_init.GPIO_Speed = GPIO_Fast_Speed;
 	gpio_init.GPIO_Mode = GPIO_Mode_AN;
 	//gpio_init.GPIO_OType = GPIO_OType_PP; //not sure which type is needed
@@ -43,8 +43,9 @@ void init_adc(void) {
 	ADC_InitTypeDef adc_init;
 	ADC_DeInit();
 	adc_init.ADC_Resolution = ADC_Resolution_12b;
-	adc_init.ADC_ScanConvMode = DISABLE; //scan just one channel
-	adc_init.ADC_NbrOfConversion = 1; //
+	adc_init.ADC_ScanConvMode = ENABLE;
+	adc_init.ADC_NbrOfConversion = 2; //scan 2 SLEW pot and RATE pot
+	adc_init.ADC_ExternalTrigConv = 0;
 	adc_init.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
 	adc_init.ADC_DataAlign = ADC_DataAlign_Right;
 	adc_init.ADC_ContinuousConvMode = ENABLE;
@@ -57,7 +58,7 @@ void init_adc(void) {
 	DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR;
 	DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&adc_buffer;
 	DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
-	DMA_InitStructure.DMA_BufferSize = 1;
+	DMA_InitStructure.DMA_BufferSize = 2;
 	DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
 	DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
 	DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
@@ -75,6 +76,7 @@ void init_adc(void) {
 	ADC_DMACmd(ADC1, ENABLE);
 
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_144Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_144Cycles);
 	ADC_Cmd(ADC1, ENABLE);
 	ADC_SoftwareStartConv(ADC1);
 
