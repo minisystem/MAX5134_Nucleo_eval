@@ -61,11 +61,21 @@ main(int argc, char* argv[])
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB , ENABLE);
 
   init_spi();
+  //init LEDs
   gpio_init_output(GPIOA, MIDI_LED);
-  //GPIO_SetBits(GPIOA, MIDI_LED);
+  gpio_init_output(GATE_LED_PORT, GATE_LED_1);
+  gpio_init_output(GATE_LED_PORT, GATE_LED_2);
+  gpio_init_output(GATE_LED_PORT, GATE_LED_3);
+  gpio_init_output(GATE_LED_PORT, GATE_LED_4);
 
+  //GATE_LED_PORT->ODR |= 0xF000;
 
-  //initialize_switches(SWITCH_PORT, SWITCH_PIN);
+  //initialize_switches
+  gpio_init_switch(CH_SW_PORT, CH1_SW);
+  gpio_init_switch(CH_SW_PORT, CH2_SW);
+  gpio_init_switch(CH_SW_PORT, CH3_SW);
+  gpio_init_switch(CH_SW_PORT, CH4_SW);
+
   init_midi_usart();
 
 

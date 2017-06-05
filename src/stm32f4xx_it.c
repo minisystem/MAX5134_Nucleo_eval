@@ -36,6 +36,7 @@
 #include "adc.h"
 #include "diag/Trace.h"
 #include "midi.h"
+#include "switches.h"
 #include <math.h>
 //#include "xnormidi-develop/midi.h"
 //#include "midi_device.h"
@@ -194,6 +195,18 @@ void SysTick_Handler(void) //currently executes every 1ms
 	} else {
 		GPIO_ResetBits(GPIOA, MIDI_LED);
 	}
+
+	uint8_t current_state = GPIO_ReadInputDataBit(button[CH1_SW_INDEX].port, button[CH1_SW_INDEX].pin);
+	button[CH1_SW_INDEX].state ^= current_state;
+	current_state ^= button[CH1_SW_INDEX].state;
+
+	if (current_state) {
+
+		//button[CH1_SW_INDEX].state ^= current_state;
+		GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_1);
+
+	}
+
 }
 
 /******************************************************************************/

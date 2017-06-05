@@ -56,4 +56,14 @@ void gpio_init_output(GPIO_TypeDef * gpio_port, uint32_t gpio_pin) {
 	  GPIO_Init(gpio_port, &gpio_init);
 }
 
+void gpio_init_switch(GPIO_TypeDef * gpio_port, uint32_t gpio_pin) {
 
+	GPIO_InitTypeDef gpio_init;
+
+	gpio_init.GPIO_Pin = gpio_pin;
+	gpio_init.GPIO_Mode = GPIO_Mode_IN;
+	gpio_init.GPIO_Speed = GPIO_Fast_Speed;
+	//gpio_init.GPIO_OType = GPIO_OType
+	gpio_init.GPIO_PuPd = GPIO_PuPd_UP; //enable pull up
+	GPIO_Init(gpio_port, &gpio_init);
+}

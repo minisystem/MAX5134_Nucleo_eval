@@ -34,6 +34,7 @@
 
 //define GATE LEDs
 #define GATE_LED_PORT GPIOB
+#define GATE_LED_MASK 0xF000;
 #define GATE_LED_1 GPIO_Pin_12
 #define GATE_LED_2 GPIO_Pin_13
 #define GATE_LED_3 GPIO_Pin_14
@@ -43,6 +44,21 @@
 #define ADC_PORT GPIOA
 #define SLEW_POT GPIO_Pin_0
 #define RATE_POT GPIO_Pin_1
+
+#define NUM_BUTTONS 7
+
+//define channel switches
+#define CH_SW_PORT GPIOB
+#define CH1_SW	GPIO_Pin_4
+#define CH2_SW	GPIO_Pin_5
+#define CH3_SW	GPIO_Pin_6
+#define CH4_SW	GPIO_Pin_7
+
+//define function switches
+#define FUNC_SW_PORT GPIOA
+#define MODE_SW	GPIO_Pin_12
+#define REC_SW	GPIO_Pin_15
+#define PARAM_SW	GPIO_Pin_9
 
 #define MIDI_RX_PIN	3 //PA3
 
