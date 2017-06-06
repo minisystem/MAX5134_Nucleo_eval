@@ -8,6 +8,8 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+#define NUM_CHANNELS 4
+
 struct flag {
 
 	uint8_t sys_tick:1;

@@ -34,7 +34,7 @@
 
 //define GATE LEDs
 #define GATE_LED_PORT GPIOB
-#define GATE_LED_MASK 0xF000;
+#define GATE_LED_MASK 0x0FFF;
 #define GATE_LED_1 GPIO_Pin_12
 #define GATE_LED_2 GPIO_Pin_13
 #define GATE_LED_3 GPIO_Pin_14

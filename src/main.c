@@ -98,20 +98,32 @@ main(int argc, char* argv[])
 
 	  if (flag.sys_tick) {
 		flag.sys_tick = 0;
-		uint8_t current_state = GPIO_ReadInputDataBit(button[CH1_SW_INDEX].port, button[CH1_SW_INDEX].pin);
-		current_state ^= button[CH1_SW_INDEX].state;
-		button[CH1_SW_INDEX].state ^= current_state;
-		current_state &= button[CH1_SW_INDEX].state;
+		uint8_t current_state = 0;
+		for (int i = 0; i < NUM_CHANNELS; i++) {
+			current_state = GPIO_ReadInputDataBit(button[i].port, button[i].pin);
+			current_state ^= button[i].state;
+			button[i].state ^= current_state;
+			current_state &= button[i].state;
+
+			if (current_state) {
+				GATE_LED_PORT->ODR &= GATE_LED_MASK;
+				GATE_LED_PORT->ODR |= (1 << (i+12));
+				//GPIO_SetBits(GATE_LED_PORT, channel[i].led) ;
+			} else {
+				//GPIO_ResetBits(GATE_LED_PORT, channel[i].led);
+			}
+		}
+
 
 		//button[CH1_SW_INDEX].state ^= current_state;
 		//current_state ^= button[CH1_SW_INDEX].state;
 
-		if (current_state) {
-
-			//button[CH1_SW_INDEX].state ^= current_state;
-			GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_1);
-			//GPIO_SetBits(GATE_LED_PORT, GATE_LED_1);
-		}
+//		if (current_state) {
+//
+//			//button[CH1_SW_INDEX].state ^= current_state;
+//			GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_1);
+//			//GPIO_SetBits(GATE_LED_PORT, GATE_LED_1);
+//		}
 	  }
 
 
