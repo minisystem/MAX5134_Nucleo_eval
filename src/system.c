@@ -9,10 +9,12 @@
 #include <stdio.h>
 #include "stm32f4xx_it.h"
 #include "system.h"
-//forward declarations
+
 
 //void setup_system_clock(void);
 //void gpio_init_output(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);
+
+__IO struct flag flag;
 
 void setup_system_clock(void) {
 

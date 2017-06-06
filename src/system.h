@@ -8,6 +8,15 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+struct flag {
+
+	uint8_t sys_tick:1;
+
+
+};
+
+__IO struct flag flag;
+
 void setup_system_clock(void);
 void gpio_init_output(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);
 void gpio_init_input(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);

@@ -37,6 +37,7 @@
 #include "diag/Trace.h"
 #include "midi.h"
 #include "switches.h"
+#include "system.h"
 #include <math.h>
 //#include "xnormidi-develop/midi.h"
 //#include "midi_device.h"
@@ -165,14 +166,9 @@ void SysTick_Handler(void) //currently executes every 1ms
 {
   //TimingDelay_Decrement();
 	//timer_tick ();
-	//turn_led_off(GPIOA, LED1);
-	//GPIO_SetBits(GPIOA, GPIO_Pin_4);
-	//turn_led_off(GPIOB, LED2);
-	//turn_led_off(GPIOC, LED3);
-	//turn_led_off(GPIOA, LED4);
+	flag.sys_tick = 1;
 	midi_device_process(&midi_device); //this needs to be called 'frequently' in order for MIDI to work
-	//GPIO_ToggleBits(GPIOA, MIDI_LED);
-	//GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+
 //	if (ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC)) {
 //		uint16_t new_adc_value = ADC_GetConversionValue(ADC1);
 //		if (adc_buffer != new_adc_value) {
@@ -196,16 +192,20 @@ void SysTick_Handler(void) //currently executes every 1ms
 		GPIO_ResetBits(GPIOA, MIDI_LED);
 	}
 
-	uint8_t current_state = GPIO_ReadInputDataBit(button[CH1_SW_INDEX].port, button[CH1_SW_INDEX].pin);
-	button[CH1_SW_INDEX].state ^= current_state;
-	current_state ^= button[CH1_SW_INDEX].state;
-
-	if (current_state) {
-
-		//button[CH1_SW_INDEX].state ^= current_state;
-		GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_1);
-
-	}
+//	uint8_t current_state = GPIO_ReadInputDataBit(button[CH1_SW_INDEX].port, button[CH1_SW_INDEX].pin);
+//	current_state ^= button[CH1_SW_INDEX].state;
+//	button[CH1_SW_INDEX].state ^= current_state;
+//	current_state &= button[CH1_SW_INDEX].state;
+//
+//	//button[CH1_SW_INDEX].state ^= current_state;
+//	//current_state ^= button[CH1_SW_INDEX].state;
+//
+//	if (current_state) {
+//
+//		//button[CH1_SW_INDEX].state ^= current_state;
+//		GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_1);
+//		//GPIO_SetBits(GATE_LED_PORT, GATE_LED_1);
+//	}
 
 }
 

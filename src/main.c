@@ -89,28 +89,31 @@ main(int argc, char* argv[])
 
   init_adc();
 
+  flag.sys_tick = 0;
+
   // Infinite loop
   while (1)
     {
 
-//	  current_switch_state = read_switch(GPIOC, SWITCH_PIN);
-//	  current_switch_state ^= previous_switch_state;
-//	  previous_switch_state ^= current_switch_state;
-//	  current_switch_state &= previous_switch_state;
-//
-//	  if (current_switch_state == 1) {
-//		  current_switch_state ^= 1<<0;
-//		  if (++led_index > 3) led_index = 0;
-//	  }
 
+	  if (flag.sys_tick) {
+		flag.sys_tick = 0;
+		uint8_t current_state = GPIO_ReadInputDataBit(button[CH1_SW_INDEX].port, button[CH1_SW_INDEX].pin);
+		current_state ^= button[CH1_SW_INDEX].state;
+		button[CH1_SW_INDEX].state ^= current_state;
+		current_state &= button[CH1_SW_INDEX].state;
 
-//	  if (read_switch(GPIOC, SWITCH_PIN) == 1) {
-//
-//		  turn_led_on(GPIOA, LED1);
-//	  } else {
-//
-//		  turn_led_off(GPIOA, LED1);
-//	  }
+		//button[CH1_SW_INDEX].state ^= current_state;
+		//current_state ^= button[CH1_SW_INDEX].state;
+
+		if (current_state) {
+
+			//button[CH1_SW_INDEX].state ^= current_state;
+			GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_1);
+			//GPIO_SetBits(GATE_LED_PORT, GATE_LED_1);
+		}
+	  }
+
 
     }
   // Infinite loop, never return.
