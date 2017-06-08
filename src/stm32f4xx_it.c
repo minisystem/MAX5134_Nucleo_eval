@@ -279,14 +279,22 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 			//TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
 			//TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
 			uint16_t DAC_value = adc_new_value[0] << 4;
-			for (int i = 1; i < 12; i++) {
+//			for (int i = 1; i < 12; i++) {
+//
+//				if ((adc_new_value[0] < 341*i) && (adc_new_value[0] > 341*(i-1))) {
+//
+//					DAC_value = 3235 + 4750*i;
+//
+//				}
+//
+//			}
 
-				if ((adc_new_value[0] < 341*i) && (adc_new_value[0] > 341*(i-1))) {
+			for (int i = 1; i < NUM_OCTAVES; i++) {
 
-					DAC_value = 3235 + 4750*i;
-
+				if ((adc_new_value[0] < 409*i) && (adc_new_value[0] > 409*(i-1))) {
+					DAC_value = channel[0].pitch_table[i];
+					//DAC_value = 3235 + 4750*i;
 				}
-
 			}
 
 			if (adc_new_value[1] > 2048) {

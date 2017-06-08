@@ -89,6 +89,7 @@ main(int argc, char* argv[])
 
   init_adc();
 
+  init_channels();
   flag.sys_tick = 0;
 
   // Infinite loop

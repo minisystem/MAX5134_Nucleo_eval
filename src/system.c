@@ -7,6 +7,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "stm32f4xx_it.h"
 #include "system.h"
 
@@ -15,6 +16,8 @@
 //void gpio_init_output(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);
 
 __IO struct flag flag;
+
+struct channel channel[NUM_CHANNELS];
 
 void setup_system_clock(void) {
 
@@ -68,4 +71,23 @@ void gpio_init_switch(GPIO_TypeDef * gpio_port, uint32_t gpio_pin) {
 	//gpio_init.GPIO_OType = GPIO_OType
 	gpio_init.GPIO_PuPd = GPIO_PuPd_UP; //enable pull up
 	GPIO_Init(gpio_port, &gpio_init);
+}
+
+void init_channels(void) {
+
+	uint16_t init_pitch_table[NUM_OCTAVES];
+
+	for (int i = 0; i < NUM_OCTAVES; i++) {
+
+		init_pitch_table[i] = i*CODE_INTERVAL;
+		channel[0].pitch_table[i] = i*CODE_INTERVAL;
+	}
+
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+
+		//memcpy((void*)channel[i].pitch_table, (const void*)init_pitch_table, (size_t)sizeof(init_pitch_table));
+	}
+
+
+
 }
