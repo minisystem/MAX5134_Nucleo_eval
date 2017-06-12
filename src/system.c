@@ -80,12 +80,12 @@ void init_channels(void) {
 	for (int i = 0; i < NUM_OCTAVES; i++) {
 
 		init_pitch_table[i] = i*CODE_INTERVAL;
-		channel[0].pitch_table[i] = i*CODE_INTERVAL;
+		//channel[0].pitch_table[i] = i*CODE_INTERVAL;
 	}
 
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 
-		//memcpy((void*)channel[i].pitch_table, (const void*)init_pitch_table, (size_t)sizeof(init_pitch_table));
+		memcpy((void*)channel[i].pitch_table, (const void*)init_pitch_table, (size_t)sizeof(init_pitch_table));
 	}
 
 

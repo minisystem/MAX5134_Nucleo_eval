@@ -299,10 +299,11 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 
 			if (adc_new_value[1] > 2048) {
 
+				//need to check for overflow - havne't done that yet
 				DAC_value += (adc_new_value[1] - 2048) >> 1;
 
 			} else {
-
+				//need to check for overflow - haven't done that yet
 				DAC_value -= (2048 - adc_new_value[1]) >> 1;
 
 			}
