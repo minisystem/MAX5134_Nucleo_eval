@@ -79,7 +79,7 @@ void init_channels(void) {
 
 	for (int i = 0; i < NUM_OCTAVES; i++) {
 
-		init_pitch_table[i] = i*CODE_INTERVAL;
+		init_pitch_table[i] = i*CODE_INTERVAL + CODE_OFFSET;
 		//channel[0].pitch_table[i] = i*CODE_INTERVAL;
 	}
 

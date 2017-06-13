@@ -100,6 +100,7 @@ main(int argc, char* argv[])
 	  if (flag.sys_tick) {
 		flag.sys_tick = 0;
 		uint8_t current_state = 0;
+		//read channel switches
 		for (int i = 0; i < NUM_CHANNELS; i++) {
 			current_state = GPIO_ReadInputDataBit(button[i].port, button[i].pin);
 			current_state ^= button[i].state;
@@ -109,10 +110,24 @@ main(int argc, char* argv[])
 			if (current_state) {
 				GATE_LED_PORT->ODR &= GATE_LED_MASK;
 				GATE_LED_PORT->ODR |= (1 << (i+12));
+				channel[i].selected = 1;
 				//GPIO_SetBits(GATE_LED_PORT, channel[i].led) ;
 			} else {
+				channel[i].selected = 0;
 				//GPIO_ResetBits(GATE_LED_PORT, channel[i].led);
 			}
+		}
+		//read function switches
+		current_state = GPIO_ReadInputDataBit(button[REC_SW_INDEX].port, button[REC_SW_INDEX].pin);
+		current_state ^= button[REC_SW_INDEX].state;
+		button[REC_SW_INDEX].state ^= current_state;
+		current_state &= button[REC_SW_INDEX].state;
+		if (current_state) {
+			//in calibration mode write octave code
+			GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_4);
+
+		} else {
+			//GPIO_ResetBits(GATE_LED_PORT, GATE_LED_4);
 		}
 
 

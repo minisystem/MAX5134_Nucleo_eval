@@ -271,14 +271,14 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
-			DAC_counter+= 4;// = DAC_counter +4; //increment dac_value
-			phase_accumulator += 1024;
+			//DAC_counter+= 4;// = DAC_counter +4; //increment dac_value
+			//phase_accumulator += 1024;
 			//TX_buffer[1] = DAC_counter; //set top byte
 			TX_buffer[0] = 0; //this is the magic right here for some reason - not setting this causes incoming MIDI USART messages to screw up DAC updating
 			//WHY? WHY GODDAMMIT WHY? //this control byte is 'No operation'
 			//TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
 			//TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
-			uint16_t DAC_value = adc_new_value[0] << 4;
+			//uint16_t DAC_value = adc_new_value[0] << 4;
 //			for (int i = 1; i < 12; i++) {
 //
 //				if ((adc_new_value[0] < 341*i) && (adc_new_value[0] > 341*(i-1))) {
@@ -288,15 +288,20 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 //				}
 //
 //			}
-
+			uint16_t DAC_value = 0;
 			for (int i = 1; i < NUM_OCTAVES; i++) {
 
 				if ((adc_new_value[0] < 409*i) && (adc_new_value[0] > 409*(i-1))) {
-					DAC_value = channel[0].pitch_table[i];
+					DAC_value = channel[0].pitch_table[i-1];
+					channel[0].octave_index = i;
 					//DAC_value = 3235 + 4750*i;
 				}
 			}
 
+			if (adc_new_value[0] < 409) { //this is a stupid exception to handle noise on the ADC channel - bleh!
+				DAC_value = channel[0].pitch_table[0];
+				channel[0].octave_index = 0;
+			}
 			if (adc_new_value[1] > 2048) {
 
 				//need to check for overflow - havne't done that yet
