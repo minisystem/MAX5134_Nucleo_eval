@@ -178,19 +178,7 @@ void SysTick_Handler(void) //currently executes every 1ms
 //		ADC_SoftwareStartConv(ADC1)
 //	}
 	//if (adc_new_value != adc_buffer) {
-	int adc_change = adc_buffer[0] - adc_new_value[0];
-	adc_new_value[0] = adc_new_value[0] + (adc_change >> 4);
-		//adc_new_value = adc_buffer;
-		//trace_printf("ADC VALUE: %u\n", adc_buffer);
-	//}
-	adc_change = adc_buffer[1] - adc_new_value[1];
-	adc_new_value[1] = adc_new_value[1] + (adc_change >> 4);
-	if (adc_new_value[1] > 2048) {
 
-		//GPIO_SetBits(GPIOA, MIDI_LED);
-	} else {
-		//GPIO_ResetBits(GPIOA, MIDI_LED);
-	}
 
 //	uint8_t current_state = GPIO_ReadInputDataBit(button[CH1_SW_INDEX].port, button[CH1_SW_INDEX].pin);
 //	current_state ^= button[CH1_SW_INDEX].state;
@@ -267,8 +255,11 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
-		TX_buffer[1] = channel[DAC_index].pitch_table[DAC_index] >> 8;
-		TX_buffer[2] = channel[DAC_index].pitch_table[DAC_index] &0xFF;
+		TX_buffer[1] = channel[DAC_index].pitch_table[channel[0].octave_index] >> 8;
+		TX_buffer[2] = channel[DAC_index].pitch_table[channel[0].octave_index] &0xFF;
+		//uint16_t value = channel[0].octave_index*CODE_INTERVAL + CODE_OFFSET;
+		//TX_buffer[1] = value >> 8;
+		//TX_buffer[2] = value & 0xFF;
 		//GPIO_ResetBits(DAC_MUX_PORT, DAC_MUX_1);
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
@@ -277,30 +268,7 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 			TX_buffer[0] = 0; //this is the magic right here for some reason - not setting this causes incoming MIDI USART messages to screw up DAC updating
 			//WHY? WHY GODDAMMIT WHY? //this control byte is 'No operation'
 
-			uint16_t DAC_value = 0;
-			for (int i = 1; i < NUM_OCTAVES; i++) {
 
-				if ((adc_new_value[0] < 409*i) && (adc_new_value[0] > 409*(i-1))) {
-					DAC_value = channel[0].pitch_table[i-1];
-					channel[0].octave_index = i;
-					//DAC_value = 3235 + 4750*i;
-				}
-			}
-
-			if (adc_new_value[0] < 409) { //this is a stupid exception to handle noise on the ADC channel - bleh!
-				DAC_value = channel[0].pitch_table[0];
-				channel[0].octave_index = 0;
-			}
-			if (adc_new_value[1] > 2048) {
-
-				//need to check for overflow - havne't done that yet
-				DAC_value += (adc_new_value[1] - 2048) >> 1;
-
-			} else {
-				//need to check for overflow - haven't done that yet
-				DAC_value -= (2048 - adc_new_value[1]) >> 1;
-
-			}
 
 			//DAC_value = 65535;
 			//TX_buffer[1] = DAC_value >> 8;

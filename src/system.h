@@ -30,7 +30,7 @@ struct channel {
 	uint8_t note;
 	uint16_t cv;
 	uint16_t pitch_table[NUM_OCTAVES];
-	uint8_t octave_index:3;
+	uint8_t octave_index:4;
 };
 
 extern volatile struct channel channel[NUM_CHANNELS];

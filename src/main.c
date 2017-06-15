@@ -98,6 +98,8 @@ main(int argc, char* argv[])
   channel[2].cv = CODE_OFFSET + 2*CODE_INTERVAL;
   channel[3].cv = CODE_OFFSET + 3*CODE_INTERVAL;
 
+  channel[0].octave_index = 0;
+
   // Infinite loop
   while (1)
     {
@@ -132,13 +134,51 @@ main(int argc, char* argv[])
 			//in calibration mode write octave code
 			//button[REC_SW_INDEX].state ^= (1<<0);
 			GPIO_ToggleBits(GPIOA, MIDI_LED);
+			//if (channel[0].octave_index++ > NUM_OCTAVES) channel[0].octave_index = 0;
 			//GPIO_SetBits(GATE_LED_PORT, GATE_LED_4);
 
 		} else {
 			//GPIO_ResetBits(GATE_LED_PORT, GATE_LED_4);
 		}
 
+		//handle ADC stuff
+		int adc_change = adc_buffer[0] - adc_new_value[0];
+		adc_new_value[0] = adc_new_value[0] + (adc_change >> 4);
+			//adc_new_value = adc_buffer;
+			//trace_printf("ADC VALUE: %u\n", adc_buffer);
+		//}
+		adc_change = adc_buffer[1] - adc_new_value[1];
+		adc_new_value[1] = adc_new_value[1] + (adc_change >> 4);
+		if (adc_new_value[1] > 2048) {
 
+			//GPIO_SetBits(GPIOA, MIDI_LED);
+		} else {
+			//GPIO_ResetBits(GPIOA, MIDI_LED);
+		}
+		uint16_t DAC_value = 0;
+		for (int i = 0; i < NUM_OCTAVES; i++) {
+
+			if (((adc_new_value[0]*10) < (4096*i + 4096)) && ((adc_new_value[0]*10) > 4096*(i))) {
+				DAC_value = channel[0].pitch_table[i];
+				channel[0].octave_index = i;
+				//DAC_value = 3235 + 4750*i;
+			}
+		}
+
+//		if (adc_new_value[0] < 409) { //this is a stupid exception to handle noise on the ADC channel - bleh!
+//			DAC_value = channel[0].pitch_table[0];
+//			channel[0].octave_index = 0;
+//		}
+		if (adc_new_value[1] > 2048) {
+
+			//need to check for overflow - havne't done that yet
+			DAC_value += (adc_new_value[1] - 2048) >> 1;
+
+		} else {
+			//need to check for overflow - haven't done that yet
+			DAC_value -= (2048 - adc_new_value[1]) >> 1;
+
+		}
 		//button[CH1_SW_INDEX].state ^= current_state;
 		//current_state ^= button[CH1_SW_INDEX].state;
 
