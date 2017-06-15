@@ -33,7 +33,7 @@ struct channel {
 	uint8_t octave_index:3;
 };
 
-extern struct channel channel[NUM_CHANNELS];
+extern volatile struct channel channel[NUM_CHANNELS];
 
 
 

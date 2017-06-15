@@ -187,9 +187,9 @@ void SysTick_Handler(void) //currently executes every 1ms
 	adc_new_value[1] = adc_new_value[1] + (adc_change >> 4);
 	if (adc_new_value[1] > 2048) {
 
-		GPIO_SetBits(GPIOA, MIDI_LED);
+		//GPIO_SetBits(GPIOA, MIDI_LED);
 	} else {
-		GPIO_ResetBits(GPIOA, MIDI_LED);
+		//GPIO_ResetBits(GPIOA, MIDI_LED);
 	}
 
 //	uint8_t current_state = GPIO_ReadInputDataBit(button[CH1_SW_INDEX].port, button[CH1_SW_INDEX].pin);
@@ -267,27 +267,16 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
+		TX_buffer[1] = channel[DAC_index].pitch_table[DAC_index] >> 8;
+		TX_buffer[2] = channel[DAC_index].pitch_table[DAC_index] &0xFF;
 		//GPIO_ResetBits(DAC_MUX_PORT, DAC_MUX_1);
 		if (DAC_index++ >= DAC_CHAN_NUM) { //finished sending data to all 4 DAC channels
 			GPIO_ResetBits(GPIOA, LDAC_PIN); //pulse LDAC to update DAC registers
 			DAC_index = 0;
-			//DAC_counter+= 4;// = DAC_counter +4; //increment dac_value
-			//phase_accumulator += 1024;
-			//TX_buffer[1] = DAC_counter; //set top byte
+
 			TX_buffer[0] = 0; //this is the magic right here for some reason - not setting this causes incoming MIDI USART messages to screw up DAC updating
 			//WHY? WHY GODDAMMIT WHY? //this control byte is 'No operation'
-			//TX_buffer[1] = sine_lut[phase_accumulator >>8] >> 8;
-			//TX_buffer[2] = sine_lut[phase_accumulator >>8] & 0xFF; //set bottom byte
-			//uint16_t DAC_value = adc_new_value[0] << 4;
-//			for (int i = 1; i < 12; i++) {
-//
-//				if ((adc_new_value[0] < 341*i) && (adc_new_value[0] > 341*(i-1))) {
-//
-//					DAC_value = 3235 + 4750*i;
-//
-//				}
-//
-//			}
+
 			uint16_t DAC_value = 0;
 			for (int i = 1; i < NUM_OCTAVES; i++) {
 
@@ -314,8 +303,8 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 			}
 
 			//DAC_value = 65535;
-			TX_buffer[1] = DAC_value >> 8;
-			TX_buffer[2] = DAC_value & 0xFF;
+			//TX_buffer[1] = DAC_value >> 8;
+			//TX_buffer[2] = DAC_value & 0xFF;
 //this bit is for hardware multiplexed DAC - in M4's case this needs to be moved to internal 12 bit DAC code
 //			if (dac_mux_addr++ > 3) {
 //
@@ -328,6 +317,7 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 //			GPIO_SetBits(DAC_MUX_PORT, DAC_MUX_1);
 
 		}
+
 		//TX_buffer[0] = DAC_ctrl_byte[DAC_index];
 
 		//if (TX_buffer[1] == 1) turn_led_on(GPIOA, LED4); //see if there's any asynchronous zeroing of TX_buffer

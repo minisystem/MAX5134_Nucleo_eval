@@ -92,6 +92,12 @@ main(int argc, char* argv[])
   init_channels();
   flag.sys_tick = 0;
 
+  //just some initial data for testing
+  channel[0].cv = CODE_OFFSET;
+  channel[1].cv = CODE_OFFSET + CODE_INTERVAL;
+  channel[2].cv = CODE_OFFSET + 2*CODE_INTERVAL;
+  channel[3].cv = CODE_OFFSET + 3*CODE_INTERVAL;
+
   // Infinite loop
   while (1)
     {
@@ -102,7 +108,7 @@ main(int argc, char* argv[])
 		uint8_t current_state = 0;
 		//read channel switches
 		for (int i = 0; i < NUM_CHANNELS; i++) {
-			current_state = GPIO_ReadInputDataBit(button[i].port, button[i].pin);
+			current_state = !(GPIO_ReadInputDataBit(button[i].port, button[i].pin)); //active LOW switch
 			current_state ^= button[i].state;
 			button[i].state ^= current_state;
 			current_state &= button[i].state;
@@ -118,13 +124,15 @@ main(int argc, char* argv[])
 			}
 		}
 		//read function switches
-		current_state = GPIO_ReadInputDataBit(button[REC_SW_INDEX].port, button[REC_SW_INDEX].pin);
+		current_state = !(GPIO_ReadInputDataBit(button[REC_SW_INDEX].port, button[REC_SW_INDEX].pin)); //active LOW switch
 		current_state ^= button[REC_SW_INDEX].state;
 		button[REC_SW_INDEX].state ^= current_state;
 		current_state &= button[REC_SW_INDEX].state;
 		if (current_state) {
 			//in calibration mode write octave code
-			GPIO_ToggleBits(GATE_LED_PORT, GATE_LED_4);
+			//button[REC_SW_INDEX].state ^= (1<<0);
+			GPIO_ToggleBits(GPIOA, MIDI_LED);
+			//GPIO_SetBits(GATE_LED_PORT, GATE_LED_4);
 
 		} else {
 			//GPIO_ResetBits(GATE_LED_PORT, GATE_LED_4);

@@ -17,7 +17,7 @@
 
 __IO struct flag flag;
 
-struct channel channel[NUM_CHANNELS];
+__IO struct channel channel[NUM_CHANNELS];
 
 void setup_system_clock(void) {
 
