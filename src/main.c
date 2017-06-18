@@ -158,7 +158,7 @@ main(int argc, char* argv[])
 		uint16_t DAC_value = 0;
 		for (int i = 0; i < NUM_OCTAVES; i++) {
 
-			if (((adc_new_value[0]*10) < (4096*i + 4096)) && ((adc_new_value[0]*10) > 4096*(i))) {
+			if (((adc_new_value[0]*10) < (POT_INTERVAL*i + POT_INTERVAL)) && ((adc_new_value[0]*10) > POT_INTERVAL*(i))) { //11 intervals from -3V to +7V
 				DAC_value = channel[0].pitch_table[i];
 				channel[0].octave_index = i;
 				//DAC_value = 3235 + 4750*i;

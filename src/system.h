@@ -9,7 +9,8 @@
 #define SYSTEM_H_
 
 #define NUM_CHANNELS 4
-#define NUM_OCTAVES 10
+#define NUM_OCTAVES 11
+#define POT_INTERVAL 3792
 #define CODE_INTERVAL 4792 //number of DAC codes between octaves
 #define CODE_OFFSET 3235 //
 
