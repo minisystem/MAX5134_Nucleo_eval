@@ -14,6 +14,16 @@
 #define CODE_INTERVAL 4792 //number of DAC codes between octaves
 #define CODE_OFFSET 3235 //
 
+enum mode {
+
+	NORMAL,
+	CALIBRATE
+
+
+};
+
+__IO enum mode mode;
+
 struct flag {
 
 	uint8_t sys_tick:1;
@@ -35,6 +45,8 @@ struct channel {
 };
 
 extern volatile struct channel channel[NUM_CHANNELS];
+
+__IO uint8_t current_channel;
 
 
 

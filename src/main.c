@@ -119,6 +119,7 @@ main(int argc, char* argv[])
 				GATE_LED_PORT->ODR &= GATE_LED_MASK;
 				GATE_LED_PORT->ODR |= (1 << (i+12));
 				channel[i].selected = 1;
+				current_channel = i;
 				//GPIO_SetBits(GATE_LED_PORT, channel[i].led) ;
 			} else {
 				channel[i].selected = 0;
@@ -134,6 +135,12 @@ main(int argc, char* argv[])
 			//in calibration mode write octave code
 			//button[REC_SW_INDEX].state ^= (1<<0);
 			GPIO_ToggleBits(GPIOA, MIDI_LED);
+			//clumsy mode toggling
+			if (mode == NORMAL) {
+				mode = CALIBRATE;
+			} else {
+				mode = NORMAL;
+			}
 			//if (channel[0].octave_index++ > NUM_OCTAVES) channel[0].octave_index = 0;
 			//GPIO_SetBits(GATE_LED_PORT, GATE_LED_4);
 
@@ -169,16 +176,21 @@ main(int argc, char* argv[])
 //			DAC_value = channel[0].pitch_table[0];
 //			channel[0].octave_index = 0;
 //		}
-		if (adc_new_value[1] > 2048) {
 
-			//need to check for overflow - havne't done that yet
-			DAC_value += (adc_new_value[1] - 2048) >> 1;
+		if (mode == CALIBRATE) {
+			if (adc_new_value[1] > 2048) {
 
-		} else {
-			//need to check for overflow - haven't done that yet
-			DAC_value -= (2048 - adc_new_value[1]) >> 1;
+				//need to check for overflow - havne't done that yet
+				channel[current_channel].pitch_table[channel[0].octave_index] += (adc_new_value[1] - 2048) >> 1;
+
+			} else {
+				//need to check for overflow - haven't done that yet
+				channel[current_channel].pitch_table[channel[0].octave_index] -= (2048 - adc_new_value[1]) >> 1;
+
+			}
 
 		}
+
 		//button[CH1_SW_INDEX].state ^= current_state;
 		//current_state ^= button[CH1_SW_INDEX].state;
 
