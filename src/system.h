@@ -48,7 +48,7 @@ extern volatile struct channel channel[NUM_CHANNELS];
 
 __IO uint8_t current_channel;
 
-
+extern volatile uint16_t DAC_value;
 
 void setup_system_clock(void);
 void gpio_init_output(GPIO_TypeDef * gpio_port, uint32_t gpio_pin);

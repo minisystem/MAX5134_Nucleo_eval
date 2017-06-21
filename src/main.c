@@ -140,6 +140,8 @@ main(int argc, char* argv[])
 				mode = CALIBRATE;
 			} else {
 				mode = NORMAL;
+				channel[current_channel].pitch_table[channel[0].octave_index] = DAC_value;
+
 			}
 			//if (channel[0].octave_index++ > NUM_OCTAVES) channel[0].octave_index = 0;
 			//GPIO_SetBits(GATE_LED_PORT, GATE_LED_4);
@@ -162,11 +164,11 @@ main(int argc, char* argv[])
 		} else {
 			//GPIO_ResetBits(GPIOA, MIDI_LED);
 		}
-		uint16_t DAC_value = 0;
+		//uint16_t DAC_value = 0;
 		for (int i = 0; i < NUM_OCTAVES; i++) {
 
 			if (((adc_new_value[0]*10) < (POT_INTERVAL*i + POT_INTERVAL)) && ((adc_new_value[0]*10) > POT_INTERVAL*(i))) { //11 intervals from -3V to +7V
-				DAC_value = channel[0].pitch_table[i];
+				//DAC_value = channel[0].pitch_table[i];
 				channel[0].octave_index = i;
 				//DAC_value = 3235 + 4750*i;
 			}
@@ -177,19 +179,8 @@ main(int argc, char* argv[])
 //			channel[0].octave_index = 0;
 //		}
 
-		if (mode == CALIBRATE) {
-			if (adc_new_value[1] > 2048) {
 
-				//need to check for overflow - havne't done that yet
-				channel[current_channel].pitch_table[channel[0].octave_index] += (adc_new_value[1] - 2048) >> 1;
 
-			} else {
-				//need to check for overflow - haven't done that yet
-				channel[current_channel].pitch_table[channel[0].octave_index] -= (2048 - adc_new_value[1]) >> 1;
-
-			}
-
-		}
 
 		//button[CH1_SW_INDEX].state ^= current_state;
 		//current_state ^= button[CH1_SW_INDEX].state;

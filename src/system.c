@@ -23,6 +23,8 @@ __IO struct channel channel[NUM_CHANNELS];
 
 __IO uint8_t current_channel = 0;
 
+__IO uint16_t DAC_value = 0;
+
 void setup_system_clock(void) {
 
 	RCC_HSEConfig(RCC_HSE_ON);
