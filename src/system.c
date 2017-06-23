@@ -21,6 +21,8 @@ __IO struct flag flag;
 
 __IO struct channel channel[NUM_CHANNELS];
 
+
+
 __IO uint8_t current_channel = 0;
 
 __IO uint16_t DAC_value = 0;
@@ -92,6 +94,11 @@ void init_channels(void) {
 	for (int i = 0; i < NUM_CHANNELS; i++) {
 
 		memcpy((void*)channel[i].pitch_table, (const void*)init_pitch_table, (size_t)sizeof(init_pitch_table));
+	}
+
+	for (int i = 0; i < NUM_OCTAVES; i++) {
+
+		channel[0].pitch_table[i] += channel[0].offset[i];
 	}
 
 

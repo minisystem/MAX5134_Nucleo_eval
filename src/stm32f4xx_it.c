@@ -255,18 +255,19 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
-		DAC_value = channel[current_channel].pitch_table[channel[0].octave_index];
+		DAC_value = channel[current_channel].pitch_table[channel[0].octave_index] + channel[current_channel].offset[channel[0].octave_index];
 		if (mode == CALIBRATE) {
 
 			if (adc_new_value[1] > 2048) {
 
 				//need to check for overflow - havne't done that yet
-				 DAC_value += (adc_new_value[1] - 2048) >> 2;
+				 //DAC_value += (adc_new_value[1] - 2048) >> 2;
+				 DAC_value = 0;
 
 			} else {
 				//need to check for overflow - haven't done that yet
-				DAC_value -= (2048 - adc_new_value[1]) >> 2;
-
+				//DAC_value -= (2048 - adc_new_value[1]) >> 2;
+				DAC_value = 0xFFFF;
 			}
 
 		}

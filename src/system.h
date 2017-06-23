@@ -11,8 +11,8 @@
 #define NUM_CHANNELS 4
 #define NUM_OCTAVES 11
 #define POT_INTERVAL 3792
-#define CODE_INTERVAL 4792 //number of DAC codes between octaves
-#define CODE_OFFSET 3235 //
+#define CODE_INTERVAL 4748 //number of DAC codes between octaves
+#define CODE_OFFSET 3110 //
 
 enum mode {
 
@@ -41,6 +41,7 @@ struct channel {
 	uint8_t note;
 	uint16_t cv;
 	uint16_t pitch_table[NUM_OCTAVES];
+	int offset[NUM_OCTAVES];
 	uint8_t octave_index:4;
 };
 

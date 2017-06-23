@@ -100,6 +100,20 @@ main(int argc, char* argv[])
 
   channel[0].octave_index = 0;
 
+  channel[0].offset[0] = 37;
+  channel[0].offset[1] = 21;
+  channel[0].offset[2] = 19;
+  channel[0].offset[3] = 31;
+  channel[0].offset[4] = 44;
+  channel[0].offset[5] = 46;
+  channel[0].offset[6] = 32;
+  channel[0].offset[7] = 14;
+  channel[0].offset[8] = 5;
+  channel[0].offset[9] = 19;
+  channel[0].offset[10] = 33;
+
+  //{0,0,0,0,0,0,0,0,0,0};
+
   // Infinite loop
   while (1)
     {
@@ -140,7 +154,7 @@ main(int argc, char* argv[])
 				mode = CALIBRATE;
 			} else {
 				mode = NORMAL;
-				channel[current_channel].pitch_table[channel[0].octave_index] = DAC_value;
+				//channel[current_channel].pitch_table[channel[0].octave_index] = DAC_value;
 
 			}
 			//if (channel[0].octave_index++ > NUM_OCTAVES) channel[0].octave_index = 0;
