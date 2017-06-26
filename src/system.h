@@ -11,8 +11,8 @@
 #define NUM_CHANNELS 4
 #define NUM_OCTAVES 11
 #define POT_INTERVAL 3792
-#define CODE_INTERVAL 4748 //number of DAC codes between octaves
-#define CODE_OFFSET 3110 //
+#define CODE_INTERVAL 4748 //number of DAC codes between octaves - there will be 4 intervals, one for each channel
+#define CODE_OFFSET 3124 // there will be 4 absolute offsets, one for each channel
 
 enum mode {
 
@@ -48,6 +48,7 @@ struct channel {
 extern volatile struct channel channel[NUM_CHANNELS];
 
 __IO uint8_t current_channel;
+__IO uint8_t octave;
 
 extern volatile uint16_t DAC_value;
 

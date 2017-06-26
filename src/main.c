@@ -100,17 +100,53 @@ main(int argc, char* argv[])
 
   channel[0].octave_index = 0;
 
-  channel[0].offset[0] = 37;
-  channel[0].offset[1] = 21;
-  channel[0].offset[2] = 19;
-  channel[0].offset[3] = 31;
-  channel[0].offset[4] = 44;
-  channel[0].offset[5] = 46;
-  channel[0].offset[6] = 32;
+  channel[0].offset[0] = 33;
+  channel[0].offset[1] = 19;
+  channel[0].offset[2] = 17;
+  channel[0].offset[3] = 28;
+  channel[0].offset[4] = 42;
+  channel[0].offset[5] = 43;
+  channel[0].offset[6] = 28;
   channel[0].offset[7] = 14;
   channel[0].offset[8] = 5;
-  channel[0].offset[9] = 19;
-  channel[0].offset[10] = 33;
+  channel[0].offset[9] = 14;
+  channel[0].offset[10] = 28;
+
+  channel[1].offset[0] = 33;
+  channel[1].offset[1] = 19;
+  channel[1].offset[2] = 17;
+  channel[1].offset[3] = 28;
+  channel[1].offset[4] = 42;
+  channel[1].offset[5] = 43;
+  channel[1].offset[6] = 28;
+  channel[1].offset[7] = 14;
+  channel[1].offset[8] = 5;
+  channel[1].offset[9] = 14;
+  channel[1].offset[10] = 28;
+
+  channel[2].offset[0] = 33;
+  channel[2].offset[1] = 19;
+  channel[2].offset[2] = 17;
+  channel[2].offset[3] = 28;
+  channel[2].offset[4] = 42;
+  channel[2].offset[5] = 43;
+  channel[2].offset[6] = 28;
+  channel[2].offset[7] = 14;
+  channel[2].offset[8] = 5;
+  channel[2].offset[9] = 14;
+  channel[2].offset[10] = 28;
+
+  channel[3].offset[0] = 33;
+  channel[3].offset[1] = 19;
+  channel[3].offset[2] = 17;
+  channel[3].offset[3] = 28;
+  channel[3].offset[4] = 42;
+  channel[3].offset[5] = 43;
+  channel[3].offset[6] = 28;
+  channel[3].offset[7] = 14;
+  channel[3].offset[8] = 5;
+  channel[3].offset[9] = 14;
+  channel[3].offset[10] = 28;
 
   //{0,0,0,0,0,0,0,0,0,0};
 
@@ -183,7 +219,8 @@ main(int argc, char* argv[])
 
 			if (((adc_new_value[0]*10) < (POT_INTERVAL*i + POT_INTERVAL)) && ((adc_new_value[0]*10) > POT_INTERVAL*(i))) { //11 intervals from -3V to +7V
 				//DAC_value = channel[0].pitch_table[i];
-				channel[0].octave_index = i;
+				//channel[0].octave_index = i;
+				octave = i;
 				//DAC_value = 3235 + 4750*i;
 			}
 		}

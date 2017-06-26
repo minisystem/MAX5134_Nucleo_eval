@@ -255,7 +255,7 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
-		DAC_value = channel[current_channel].pitch_table[channel[0].octave_index] + channel[current_channel].offset[channel[0].octave_index];
+		DAC_value = channel[DAC_index].pitch_table[octave] + channel[DAC_index].offset[octave];
 		if (mode == CALIBRATE) {
 
 			if (adc_new_value[1] > 2048) {
