@@ -19,10 +19,6 @@ __IO enum mode mode = NORMAL;
 
 __IO struct flag flag;
 
-__IO struct channel channel[NUM_CHANNELS];
-
-
-
 __IO uint8_t current_channel = 0;
 __IO uint8_t octave = 0;
 

@@ -8,6 +8,8 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
+#include "stm32f4xx_it.h"
+
 #define NUM_CHANNELS 4
 #define NUM_OCTAVES 11
 #define POT_INTERVAL 3792
@@ -33,19 +35,21 @@ struct flag {
 
 __IO struct flag flag;
 
-struct channel {
+struct ChannelStruct {
 
 	uint8_t gate:1;
 	uint8_t selected:1;
 	uint8_t mode;
 	uint8_t note;
 	uint16_t cv;
+	uint16_t zero_offset;
+	uint16_t code_interval;
 	uint16_t pitch_table[NUM_OCTAVES];
 	int offset[NUM_OCTAVES];
 	uint8_t octave_index:4;
 };
 
-extern volatile struct channel channel[NUM_CHANNELS];
+extern volatile struct ChannelStruct channel[];
 
 __IO uint8_t current_channel;
 __IO uint8_t octave;

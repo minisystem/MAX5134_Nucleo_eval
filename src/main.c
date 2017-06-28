@@ -93,7 +93,7 @@ main(int argc, char* argv[])
   flag.sys_tick = 0;
 
   //just some initial data for testing
-  channel[0].cv = CODE_OFFSET;
+  /*channel[0].cv = CODE_OFFSET;
   channel[1].cv = CODE_OFFSET + CODE_INTERVAL;
   channel[2].cv = CODE_OFFSET + 2*CODE_INTERVAL;
   channel[3].cv = CODE_OFFSET + 3*CODE_INTERVAL;
@@ -149,7 +149,7 @@ main(int argc, char* argv[])
   channel[3].offset[10] = 28;
 
   //{0,0,0,0,0,0,0,0,0,0};
-
+*/
   // Infinite loop
   while (1)
     {
