@@ -89,7 +89,8 @@ main(int argc, char* argv[])
 
   init_adc();
 
-  init_channels();
+  //init_channels();
+  setupCalibration();
   flag.sys_tick = 0;
 
   //just some initial data for testing

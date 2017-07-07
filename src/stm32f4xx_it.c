@@ -239,10 +239,10 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 	//http://www.micromouseonline.com/2012/03/11/adding-dma-to-the-spi-driver-with-the-stm32f4/
 	uint8_t DAC_ctrl_byte[DAC_CHAN_NUM] = {
 
-			DAC_CHAN_0,
+			DAC_CHAN_2, //match to jack order on PCB
 			DAC_CHAN_1,
-			DAC_CHAN_2,
-			DAC_CHAN_3
+			DAC_CHAN_3,
+			DAC_CHAN_0
 
 	};
 
@@ -255,7 +255,7 @@ void DMA2_Stream4_IRQHandler(void) { //SPI5 DMA IRQ Handler
 		GPIO_SetBits(GPIOA, DAC_CS_PIN); //release DAC
 
 		TX_buffer[0] = DAC_ctrl_byte[DAC_index];
-		DAC_value = channel[DAC_index].pitch_table[octave] + channel[DAC_index].offset[octave];
+		DAC_value = channel[DAC_index].pitch_table[octave];// + channel[DAC_index].offset[octave];
 		if (mode == CALIBRATE) {
 
 			if (adc_new_value[1] > 2048) {

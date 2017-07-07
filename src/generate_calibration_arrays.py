@@ -72,7 +72,7 @@ def replaceFixedAreaWithText(fname, new_text, start_line="// PYTHON REPLACE HERE
 
 BASE_OFFSET_CODE = 'channel[%d].zero_offset = %d;'
 INTERVAL_CODE = 'channel[%d].code_interval = %d;'
-INDIVIDUAL_OFFSET_CODE = 'channel[%d].offset[%d] = %d;'
+INDIVIDUAL_OFFSET_CODE = 'channel[%d].pitch_table[%d] = %d;'
   
 def generate_c_code(meta_data_range):
     """
