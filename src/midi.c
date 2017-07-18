@@ -9,6 +9,9 @@
 #include "hardware.h"
 #include "stm32f4xx_conf.h"
 #include "stm32f4xx.h"
+#include "main.h"
+#include "system.h"
+#include "tune.h"
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
 
@@ -89,10 +92,26 @@ void init_midi_usart(void) {
 	DMA_Cmd(DMA1_Stream5,ENABLE);
 }
 
-void note_on_event(MidiDevice * device, uint8_t channel, uint8_t note, uint8_t velocity) {
+void note_on_event(MidiDevice * device, uint8_t midi_channel, uint8_t note, uint8_t velocity) {
 
 	//turn_led_on(GPIOA, LED1);
 	GPIO_SetBits(GPIOA, MIDI_LED);
+	channel[0].cv = interpolate_pitch_cv(note, channel[0].pitch_table);
+	channel[1].cv = interpolate_pitch_cv(note, channel[1].pitch_table);
+	channel[2].cv = interpolate_pitch_cv(note, channel[2].pitch_table);
+	channel[3].cv = interpolate_pitch_cv(note, channel[3].pitch_table);
+
+	GPIO_SetBits(GATE_PORT, GATE_1);
+	GPIO_SetBits(GATE_PORT, GATE_2);
+	GPIO_SetBits(GATE_PORT, GATE_3);
+	GPIO_SetBits(GATE_PORT, GATE_4);
+
+	GPIO_SetBits(GATE_PORT, GATE_LED_1);
+	GPIO_SetBits(GATE_PORT, GATE_LED_2);
+	GPIO_SetBits(GATE_PORT, GATE_LED_3);
+	GPIO_SetBits(GATE_PORT, GATE_LED_4);
+
+
 
 
 }
@@ -100,6 +119,15 @@ void note_off_event(MidiDevice * device, uint8_t status, uint8_t note, uint8_t v
 
 	//turn_led_off(GPIOA, LED1);
 	GPIO_ResetBits(GPIOA, MIDI_LED);
+	GPIO_ResetBits(GATE_PORT, GATE_1);
+	GPIO_ResetBits(GATE_PORT, GATE_2);
+	GPIO_ResetBits(GATE_PORT, GATE_3);
+	GPIO_ResetBits(GATE_PORT, GATE_4);
+
+	GPIO_ResetBits(GATE_PORT, GATE_LED_1);
+	GPIO_ResetBits(GATE_PORT, GATE_LED_2);
+	GPIO_ResetBits(GATE_PORT, GATE_LED_3);
+	GPIO_ResetBits(GATE_PORT, GATE_LED_4);
 }
 void real_time_event(MidiDevice * device, uint8_t real_time_byte) {
 

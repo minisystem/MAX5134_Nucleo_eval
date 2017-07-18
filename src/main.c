@@ -20,6 +20,7 @@
 #include "adc.h"
 #include "spi.h"
 #include "system.h"
+#include "tune.h"
 
 #include "xnormidi-develop/midi.h"
 #include "xnormidi-develop/midi_device.h"
@@ -68,6 +69,13 @@ main(int argc, char* argv[])
   gpio_init_output(GATE_LED_PORT, GATE_LED_3);
   gpio_init_output(GATE_LED_PORT, GATE_LED_4);
 
+
+  gpio_init_output(GATE_PORT, GATE_1);
+  gpio_init_output(GATE_PORT, GATE_2);
+  gpio_init_output(GATE_PORT, GATE_3);
+  gpio_init_output(GATE_PORT, GATE_4);
+
+
   //GATE_LED_PORT->ODR |= 0xF000;
 
   //initialize_switches
@@ -93,64 +101,7 @@ main(int argc, char* argv[])
   setupCalibration();
   flag.sys_tick = 0;
 
-  //just some initial data for testing
-  /*channel[0].cv = CODE_OFFSET;
-  channel[1].cv = CODE_OFFSET + CODE_INTERVAL;
-  channel[2].cv = CODE_OFFSET + 2*CODE_INTERVAL;
-  channel[3].cv = CODE_OFFSET + 3*CODE_INTERVAL;
 
-  channel[0].octave_index = 0;
-
-  channel[0].offset[0] = 33;
-  channel[0].offset[1] = 19;
-  channel[0].offset[2] = 17;
-  channel[0].offset[3] = 28;
-  channel[0].offset[4] = 42;
-  channel[0].offset[5] = 43;
-  channel[0].offset[6] = 28;
-  channel[0].offset[7] = 14;
-  channel[0].offset[8] = 5;
-  channel[0].offset[9] = 14;
-  channel[0].offset[10] = 28;
-
-  channel[1].offset[0] = 33;
-  channel[1].offset[1] = 19;
-  channel[1].offset[2] = 17;
-  channel[1].offset[3] = 28;
-  channel[1].offset[4] = 42;
-  channel[1].offset[5] = 43;
-  channel[1].offset[6] = 28;
-  channel[1].offset[7] = 14;
-  channel[1].offset[8] = 5;
-  channel[1].offset[9] = 14;
-  channel[1].offset[10] = 28;
-
-  channel[2].offset[0] = 33;
-  channel[2].offset[1] = 19;
-  channel[2].offset[2] = 17;
-  channel[2].offset[3] = 28;
-  channel[2].offset[4] = 42;
-  channel[2].offset[5] = 43;
-  channel[2].offset[6] = 28;
-  channel[2].offset[7] = 14;
-  channel[2].offset[8] = 5;
-  channel[2].offset[9] = 14;
-  channel[2].offset[10] = 28;
-
-  channel[3].offset[0] = 33;
-  channel[3].offset[1] = 19;
-  channel[3].offset[2] = 17;
-  channel[3].offset[3] = 28;
-  channel[3].offset[4] = 42;
-  channel[3].offset[5] = 43;
-  channel[3].offset[6] = 28;
-  channel[3].offset[7] = 14;
-  channel[3].offset[8] = 5;
-  channel[3].offset[9] = 14;
-  channel[3].offset[10] = 28;
-
-  //{0,0,0,0,0,0,0,0,0,0};
-*/
   // Infinite loop
   while (1)
     {
